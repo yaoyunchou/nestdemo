@@ -6,10 +6,10 @@ export class Panel {
     @PrimaryGeneratedColumn()
     id: number;  // 主键
 
-    @Column()
+    @Column("text")
     prompt: string;  // 提示
 
-    @Column()
+    @Column("text")
     content: string;  // 内容
 
     @Column()

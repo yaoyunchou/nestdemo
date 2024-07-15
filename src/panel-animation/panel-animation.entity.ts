@@ -6,10 +6,10 @@ export class PanelAnimation {
     @PrimaryGeneratedColumn()
     id: number;  // 主键
 
-    @Column()
+    @Column("text")
     totalContent: string;  // 总内容
 
-    @Column()
+    @Column("text")
     prompt: string;  // 总提示
 
     @Column("text")
