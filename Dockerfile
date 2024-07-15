@@ -12,7 +12,7 @@ COPY . ./
 # 使用Yarn安装 app 依赖
 # 如果你需要构建生产环境下的代码，请使用：
 # --prod参数
-RUN yarn install --registry=https://registry.npm.taobao.org
+RUN yarn install 
 
 RUN npm run build
 
