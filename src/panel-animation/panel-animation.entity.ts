@@ -12,7 +12,7 @@ export class PanelAnimation {
     @Column()
     prompt: string;  // 总提示
 
-    @Column()
+    @Column("text")
     imageUrl: string;  // 四格图片地址
 
     @Column()

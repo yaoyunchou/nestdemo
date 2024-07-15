@@ -15,7 +15,7 @@ export class Panel {
     @Column()
     index: number;  // 索引
 
-    @Column()
+    @Column("text")
     imageUrl: string;  // 图片地址
 
     @ManyToOne(() => PanelAnimation, panelAnimation => panelAnimation)
