@@ -1,31 +1,23 @@
-# build stage
-FROM node:20 as build-stage
+# 使用官方的 Node.js 作为基础镜像
+FROM node:18
 
-LABEL maintainer=brian@toimc.com
+# 创建并设置工作目录
+WORKDIR /usr/src/app
 
-# 创建 app 目录
-WORKDIR /app
+# 复制 package.json 和 package-lock.json
+COPY package*.json ./
 
-# 使用.dockerignore文件
-COPY . ./
+# 安装项目依赖
+RUN npm install
 
-# 使用Yarn安装 app 依赖
-# 如果你需要构建生产环境下的代码，请使用：
-# --prod参数
-RUN yarn install 
+# 复制项目文件到工作目录
+COPY . .
 
+# 编译 NestJS 项目
 RUN npm run build
 
-# production stage
-FROM node:20 as production-stage
-
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-COPY package.json .
-
-RUN yarn install 
-
+# 暴露应用运行的端口
 EXPOSE 3001
 
-# 运行程序的脚本或者命令
+# 定义应用的启动命令
 CMD ["npm", "run", "start:prod"]
