@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3001
 
 # 定义应用的启动命令
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:dev"]
