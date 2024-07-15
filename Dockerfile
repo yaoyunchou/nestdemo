@@ -1,5 +1,5 @@
 # build stage
-FROM node:14 as build-stage
+FROM node:18 as build-stage
 
 LABEL maintainer=brian@toimc.com
 
@@ -17,15 +17,15 @@ RUN yarn install --registry=https://registry.npm.taobao.org
 RUN npm run build
 
 # production stage
-FROM node:14-alpine as production-stage
+FROM node:18 as production-stage
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 COPY package.json .
 
-RUN yarn install --registry=https://registry.npm.taobao.org
+RUN yarn install 
 
-EXPOSE 13000
+EXPOSE 3001
 
 # 运行程序的脚本或者命令
 CMD ["npm", "run", "start:prod"]
