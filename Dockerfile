@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # 安装项目依赖
-RUN yarn
+RUN npm i
 
 # 复制项目文件到工作目录
 COPY . .
