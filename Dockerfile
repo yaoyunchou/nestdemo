@@ -1,5 +1,5 @@
 # build stage
-FROM node:18 as build-stage
+FROM node:20 as build-stage
 
 LABEL maintainer=brian@toimc.com
 
@@ -17,7 +17,7 @@ RUN yarn install
 RUN npm run build
 
 # production stage
-FROM node:18 as production-stage
+FROM node:20 as production-stage
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
