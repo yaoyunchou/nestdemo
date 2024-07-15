@@ -1,15 +1,31 @@
-# 运行的环境 -> Linux文件系统创建出来的 /usr /sys /dev /proc
-FROM node:14
+# build stage
+FROM node:14 as build-stage
 
-# 工作目录及代码
+LABEL maintainer=brian@toimc.com
+
+# 创建 app 目录
 WORKDIR /app
 
-# 构建命令 npm install && npm run build
-COPY . .
+# 使用.dockerignore文件
+COPY . ./
 
-# 暴露的目录与端口
-VOLUME [ "/app/logs" ]
+# 使用Yarn安装 app 依赖
+# 如果你需要构建生产环境下的代码，请使用：
+# --prod参数
+RUN yarn install --registry=https://registry.npm.taobao.org
+
+RUN npm run build
+
+# production stage
+FROM node:14-alpine as production-stage
+
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+COPY package.json .
+
+RUN yarn install --registry=https://registry.npm.taobao.org
 
 EXPOSE 13000
+
 # 运行程序的脚本或者命令
 CMD ["npm", "run", "start:prod"]
