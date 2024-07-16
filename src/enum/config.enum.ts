@@ -1,4 +1,5 @@
 export enum ConfigEnum {
+  NODE_ENV = 'NODE_ENV',
   DB_TYPE = 'DB_TYPE',
   DB_HOST = 'DB_HOST',
   DB_PORT = 'DB_PORT',

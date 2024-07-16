@@ -15,7 +15,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 
 // import { APP_GUARD, } from '@nestjs/core';
 // import { AdminGuard } from './guards/admin.guard';
-import { ConfigEnum } from './enum/config.enum';
+import { ConfigEnum, LogEnum } from './enum/config.enum';
 import { PanelAnimationModule } from './panel-animation/panel-animation.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
@@ -40,14 +40,27 @@ const schema = Joi.object({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath,
+      // envFilePath,e
       // https://github.com/nestjs/config/issues/209#issuecomment-625765057
       // load方法需要自己加入验证
       // 解决方法：https://dev.to/rrgt19/ways-to-validate-environment-configuration-in-a-forfeature-config-in-nestjs-2ehp
       load: [
-        () => {
-          const values = dotenv.config({ path: '.env' });
-          const { error } = schema.validate(values?.parsed, {
+        async() => {
+          const values =   dotenv.config({ path: '.env' });
+          const newConfig = {
+            NODE_ENV: process.env[ConfigEnum.NODE_ENV],
+            DB_PORT: process.env[ConfigEnum.DB_PORT],
+            DB_HOST: process.env[ConfigEnum.DB_HOST],
+            DB_TYPE: process.env[ConfigEnum.DB_TYPE],
+            DB_DATABASE: process.env[ConfigEnum.DB_DATABASE],
+            DB_USERNAME: process.env[ConfigEnum.DB_USERNAME],
+            DB_PASSWORD: process.env[ConfigEnum.DB_PASSWORD],
+            DB_SYNC: process.env[ConfigEnum.DB_SYNC],
+            LOG_ON:process.env[LogEnum.LOG_ON],
+            LOG_LEVEL: process.env[LogEnum.LOG_LEVEL],
+          };
+          
+          const { error } = schema.validate(process.env.NODE_ENV === "production" ? newConfig: values.parsed, {
             // 允许未知的环境变量
             allowUnknown: true,
             // 如果有错误，不要立即停止，而是收集所有错误
@@ -56,10 +69,11 @@ const schema = Joi.object({
           if (error) {
             throw new Error(
               `Validation failed - Is there an environment variable missing?
-        ${error.message}`,
+              ${error.message}`,
             );
           }
-          return values;
+
+          return process.env.NODE_ENV === "production" ? newConfig: values.parsed
         },
       ],
       validationSchema: schema,
