@@ -18,7 +18,9 @@ export function getServerConfig() {
   const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
   // configService
   const config = { ...defaultConfig, ...envConfig };
-  return config;
+  console.log('config-------------------------', config)
+  console.log('process.env-------------------------', process.env)
+  return process.env.NODE_ENV ==="production" ? process.env : config;
 }
 
 // 通过dotENV来解析不同的配置
