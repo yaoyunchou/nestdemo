@@ -38,7 +38,7 @@ export class PanelAnimationService {
   }
 
   update(id: number, updatePanelAnimationDto: UpdatePanelAnimationDto) {
-    return `This action updates a #${id} panelAnimation`;
+    return `This action updates a 333#${id} panelAnimation`;
   }
 
   remove(id: number) {

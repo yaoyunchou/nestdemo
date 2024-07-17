@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Panel } from './one-panel-animation.entity';
 
 @Entity()
@@ -21,6 +21,13 @@ export class PanelAnimation {
     @Column()
     updateTime: string;  // 更新时间
 
+    
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+    
     @OneToMany(() => Panel, Panel => Panel.parent,  { cascade: ['insert'] })
     panels: Panel[];
 }

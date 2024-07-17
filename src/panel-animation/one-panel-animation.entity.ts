@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { PanelAnimation } from './panel-animation.entity';
 
 @Entity()
@@ -18,6 +18,12 @@ export class Panel {
     @Column("text")
     imageUrl: string;  // 图片地址
 
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+    
     @ManyToOne(() => PanelAnimation, panelAnimation => panelAnimation)
     parent: PanelAnimation;
 

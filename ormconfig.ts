@@ -18,8 +18,8 @@ export function getServerConfig() {
   const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
   // configService
   const config = { ...defaultConfig, ...envConfig };
-  console.log('config-------------------------', defaultConfig, envConfig)
-  console.log('process.env---------eeeeeee----------------', config[ConfigEnum.DB_DATABASE])
+  // console.log('config-------------------------', defaultConfig, envConfig)
+  // console.log('process.env---------eeeeeee----------------', config[ConfigEnum.DB_DATABASE])
   return process.env.NODE_ENV ==="production" ? process.env : config;
 }
 
@@ -29,8 +29,8 @@ export function buildConnectionOptions() {
   const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`);
   // configService
   const config = process.env.NODE_ENV ==="production" ? process.env : { ...defaultConfig, ...envConfig };
-  console.log('defaultConfig......  .envConfig-------------------------', defaultConfig,envConfig )
-  console.log('process.env-------------------------', config[ConfigEnum.DB_DATABASE])
+  // console.log('defaultConfig......  .envConfig-------------------------', defaultConfig,envConfig )
+  // console.log('process.env-------------------------', config[ConfigEnum.DB_DATABASE])
   const logFlag = config['LOG_ON'] === 'true';
 
   const entitiesDir =
