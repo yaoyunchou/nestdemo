@@ -51,9 +51,11 @@ export class BookService {
 
     const listResult = await this.bookViewRepository.find(
       {
-        where: whereParams,
-        // take: query.pageSize,
+        where: whereParams.length? whereParams : {},
+       
+        take: query.pageSize,
         skip: (query.page - 1) * query.pageSize,
+      
       }
     );
     return listResult

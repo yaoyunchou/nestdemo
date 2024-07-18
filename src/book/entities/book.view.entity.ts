@@ -6,7 +6,7 @@ export class BookView {
     id: number;  // 主键
     
     @Column()  // 书籍id  
-    bookId: string;
+    productId: string;
     
     @Column()
     exposure: number;  // 曝光量
