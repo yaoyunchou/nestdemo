@@ -7,7 +7,7 @@ export class CreateBookViewDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    bookId: string;
+    productId: string;
 
     // 曝光量
     @IsNumber()
