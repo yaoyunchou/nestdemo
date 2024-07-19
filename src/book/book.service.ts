@@ -35,9 +35,17 @@ export class BookService {
 
   // 书籍曝光数据
   async createBookView(createBookViewDto: CreateBookViewDto) {
-    const result = await this.bookViewRepository.create(createBookViewDto);
-    const bookView = await this.bookViewRepository.save(result);
-    return bookView;
+    // 检查是否当前日期的数据已经有了， 有了则走更新， 没有则走创建
+    const checkData = await this.bookViewRepository.findOne({where: {productId: createBookViewDto.productId, createTimestamp: createBookViewDto.createTimestamp}});
+
+    if(checkData) {
+      return this.bookViewRepository.update(checkData.id, createBookViewDto);
+    }else{
+      const result = await this.bookViewRepository.create(createBookViewDto);
+      const bookView = await this.bookViewRepository.save(result);
+      return bookView;
+    }
+    
   }
 
   // 获取书籍曝光数据
