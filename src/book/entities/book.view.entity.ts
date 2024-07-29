@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Book } from "./book.entity";
 
 @Entity()
 export class BookView {
@@ -25,4 +26,8 @@ export class BookView {
 
     @UpdateDateColumn() // 更新时间
     updatedAt: Date;
+
+    @ManyToOne(() => Book, book => book.bookViews)
+    @JoinColumn()
+    book: Book;
 }

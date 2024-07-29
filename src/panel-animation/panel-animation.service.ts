@@ -8,8 +8,11 @@ import { Panel } from './one-panel-animation.entity';
 
 @Injectable()
 export class PanelAnimationService {
-  @InjectRepository(PanelAnimation) private readonly panelAnimationRepository: Repository<PanelAnimation>
-  @InjectRepository(Panel) private readonly onePanelRepository: Repository<Panel>
+  constructor(
+  @InjectRepository(PanelAnimation) private readonly panelAnimationRepository: Repository<PanelAnimation>,
+  @InjectRepository(Panel) private readonly onePanelRepository: Repository<Panel>){
+    
+  }
  
  
   async create(createPanelAnimationDto: CreatePanelAnimationDto) {

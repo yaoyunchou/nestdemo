@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BookView } from './entities/book.view.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
 import * as _ from 'lodash';
+import { Book } from './entities/book.entity';
 
 @Injectable()
 export class BookService {
   constructor(
-    @InjectRepository(BookView) private readonly bookViewRepository: Repository<BookView>) {
-     
-  }
+    @InjectRepository(BookView) private readonly bookViewRepository: Repository<BookView>,
+    @InjectRepository(Book) private readonly bookRepository: Repository<Book>){
+
+    }
   create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+    console.log(createBookDto)
+    const result =  this.bookRepository.create(createBookDto);
+    const createBookInfo = this.bookRepository.save(result);
+    return createBookInfo;
   }
 
   findAll() {
