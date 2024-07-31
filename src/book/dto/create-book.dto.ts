@@ -12,7 +12,18 @@ export class CreateBookDto {
     // 书名
     @IsString()
     @ApiProperty()
-    name: string;
+    title: string;
+
+    // 描述
+    @IsString()
+    @ApiProperty()
+    content: string;
+
+    // 价格
+    @IsNumber()
+    @ApiProperty()
+    price: number;
+
 
     // 作者
     @IsString()

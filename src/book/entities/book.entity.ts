@@ -18,6 +18,9 @@ export class Book {
     @Column("text",  { nullable: true })
     description: string;  // 书籍描述
 
+    @Column("text",  { nullable: true })
+    content: string;  // 书籍詳情
+
     @Column("text", { nullable: true })
     title: string;  // 书籍标题
 
