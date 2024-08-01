@@ -20,3 +20,12 @@ export const getEntities = (path: string) => {
     }
   }
 };
+
+
+export const reponseWarp = (data: any, code: number = 0, message: string ="获取数据") => {
+  return {
+    data,
+    code,
+    message,
+  };
+}

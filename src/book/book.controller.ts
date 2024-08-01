@@ -15,8 +15,8 @@ export class BookController {
   }
 
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  findAll(@Query() query: any) {
+    return this.bookService.findAll(query);
   }
 
   @Get(':id')

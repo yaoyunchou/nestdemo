@@ -22,8 +22,22 @@ export class BookService {
     return createBookInfo;
   }
 
-  findAll() {
-    return `This action returns all book`;
+  findAll(query) {
+    console.log('query----------------', query)
+    const newQuery = _.omit(query, ['page', 'pageSize'])
+    const whereParams =  Object.keys(newQuery).map(key => {
+      return { [key]: newQuery[key] }
+    })
+    console.log('listResult----------------', whereParams)
+
+    const bookList = this.bookRepository.find({
+      where: whereParams.length? whereParams : {},
+     
+      take: query?.pageSize|| 10,
+      skip: ((query.page || 1) - 1) * (query.pageSize || 10),
+    
+    });
+    return bookList;
   }
 
   findOne(id: number) {
