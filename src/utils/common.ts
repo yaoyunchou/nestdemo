@@ -22,7 +22,7 @@ export const getEntities = (path: string) => {
 };
 
 
-export const reponseWarp = (data: any, code: number = 0, message: string ="获取数据") => {
+export const responseWarp = (data: any, code: number = 0, message: string ="数据获取成功！") => {
   return {
     data,
     code,

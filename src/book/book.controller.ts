@@ -3,6 +3,7 @@ import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
+import { responseWarp } from 'src/utils/common';
 
 @Controller('book')
 export class BookController {
@@ -15,8 +16,9 @@ export class BookController {
   }
 
   @Get()
-  findAll(@Query() query: any) {
-    return this.bookService.findAll(query);
+  async findAll(@Query() query: any) {
+    const books = await this.bookService.findAll(query);
+    return  responseWarp(books);
   }
 
   @Get(':id')

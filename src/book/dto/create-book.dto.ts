@@ -37,7 +37,7 @@ export class CreateBookDto {
     @IsString()
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
-    publish?: string;
+    publisher?: string;
 
 
     // 图片

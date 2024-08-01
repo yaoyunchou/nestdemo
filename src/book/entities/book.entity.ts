@@ -31,7 +31,7 @@ export class Book {
     price: number;  // 价格
 
     @Column({default: ''})
-    publish: string;  // 出版社
+    publisher: string;  // 出版社
     
     @Column({default: ''})
     isbn: string;  // ISBN
