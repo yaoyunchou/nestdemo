@@ -15,11 +15,20 @@ export class BookService {
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>){
 
     }
-  create(createBookDto: CreateBookDto) {
-    console.log(createBookDto)
-    const result =  this.bookRepository.create(createBookDto);
-    const createBookInfo = this.bookRepository.save(result);
-    return createBookInfo;
+  async create(createBookDto: CreateBookDto) {
+    const checkData = await this.bookRepository.findOne({where: {isbn: createBookDto.isbn} });
+    console.log(checkData)
+
+    if(checkData) {
+      const result =  this.bookRepository.update(checkData.id, createBookDto);
+      console.log('result----------------', result)
+      return '数据已存在, 书籍进行更新';
+    }else {
+      const result = await this.bookRepository.create(createBookDto);
+      const createBookInfo = await this.bookRepository.save(result);
+      return createBookInfo;
+    }
+   
   }
 
   findAll(query) {

@@ -11,14 +11,14 @@ export class BookController {
 
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
-
+    
     return this.bookService.create(createBookDto);
   }
 
   @Get()
   async findAll(@Query() query: any) {
     const books = await this.bookService.findAll(query);
-    return  responseWarp(books);
+    return  responseWarp({list: books, total: 10000, page: 1, pageSize: 10});
   }
 
   @Get(':id')
