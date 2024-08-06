@@ -35,6 +35,12 @@ export class Book {
     
     @Column({default: ''})
     isbn: string;  // ISBN
+    
+    @Column({default: ''})
+    firstCategory: string;  // 书籍的第一级分类
+
+    @Column({default: ''})
+    secondCategory: string;  // 书籍的第二级分类
 
 
     @UpdateDateColumn() // 更新时间
@@ -43,7 +49,7 @@ export class Book {
     @OneToMany(() => BookView, bookView => bookView.book)
     bookViews: BookView[];
 
-    @OneToMany(() => Image, image => image.book, { cascade: ['insert'] })
+    @OneToMany(() => Image, image => image.book, { cascade: true })
     images: Image[];
 
     @ManyToMany(() => Shop, shop => shop.books)

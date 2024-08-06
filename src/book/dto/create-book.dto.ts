@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, isObject } from "class-validator";
-import { Image } from "../entities/image.entity";
+import { CreateImageDto } from "./create-image.dto";
+import { Type } from "class-transformer";
 export class CreateBookDto {
 
     // isbn
@@ -8,6 +9,19 @@ export class CreateBookDto {
     @IsNotEmpty()
     @ApiProperty()
     isbn: string;
+
+
+    // 书籍的第一级分类必填
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty()
+    firstCategory: string; // 书籍的第一级分类
+
+    // 必填
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty()
+    secondCategory: string; // 书籍的第二级分类
 
     // 书名
     @IsOptional() // 非必填
@@ -44,6 +58,8 @@ export class CreateBookDto {
     @IsArray()
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
-    images?: Image[];
+    @Type(() => CreateImageDto) // 使用Type来指定数组中元素的类型
+    images: CreateImageDto[];
+
 
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { In, Repository } from 'typeorm';
+import { In, Repository, getRepository } from 'typeorm';
 import { BookView } from './entities/book.view.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
@@ -31,22 +31,42 @@ export class BookService {
    
   }
 
-  findAll(query) {
+  async findAll(query) {
     console.log('query----------------', query)
     const newQuery = _.omit(query, ['page', 'pageSize'])
-    const whereParams =  Object.keys(newQuery).map(key => {
-      return { [key]: newQuery[key] }
-    })
-    console.log('listResult----------------', whereParams)
-
-    const bookList = this.bookRepository.find({
-      where: whereParams.length? whereParams : {},
+    // const whereParams =  Object.keys(newQuery).map(key => {
+    //   return { [key]: newQuery[key] }
+    // })
+    // console.log('listResult----------------', whereParams)
+    // const total = this.bookRepository.find({
+    //   where: whereParams.length? whereParams : {}}).getCount();
+    // const bookList = this.bookRepository.find({
+    //   where: whereParams.length? whereParams : {},
      
-      take: query?.pageSize|| 10,
-      skip: ((query.page || 1) - 1) * (query.pageSize || 10),
+    //   take: query?.pageSize|| 10,
+    //   skip: ((query.page || 1) - 1) * (query.pageSize || 10),
     
+    // });
+    const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
+    Object.keys(newQuery).forEach(key => {
+      queryBuilder.andWhere(`${key} = :${key}`, newQuery);
     });
-    return bookList;
+   
+    // 计算满足筛选条件的记录总数
+    const count = await queryBuilder.getCount();
+    // 应用分页
+    const queryPage = Number(query.page) || 1;
+    const queryPageSize = Number(query.pageSize) || 10;
+    queryBuilder.skip((queryPage - 1) * queryPageSize).take(queryPageSize);
+    // 使用leftJoinAndSelect来加载关联的images
+    queryBuilder.leftJoinAndSelect("book.images", "image")
+    .select(["book.id", "book.title","book.isbn", "book.price","book.author", "book.publisher", "image.id", "image.url"]);;
+     // 获取当前页的书籍
+    const books = await queryBuilder.getMany();
+    return {
+      total: count,
+      books
+    };
   }
 
   findOne(id: number) {

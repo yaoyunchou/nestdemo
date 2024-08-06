@@ -17,8 +17,8 @@ export class BookController {
 
   @Get()
   async findAll(@Query() query: any) {
-    const books = await this.bookService.findAll(query);
-    return  responseWarp({list: books, total: 10000, page: 1, pageSize: 10});
+    const bookDataInfo = await this.bookService.findAll(query);
+    return  responseWarp({list: bookDataInfo.books, total: bookDataInfo.total, page: query.page|| 1, pageSize: query.pageSize ||10});
   }
 
   @Get(':id')
