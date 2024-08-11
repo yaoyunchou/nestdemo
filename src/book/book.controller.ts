@@ -22,8 +22,13 @@ export class BookController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const data = await this.bookService.findOneById(+id);
+    if(!data) {
+      return responseWarp(null, 400, '数据不存在');
+    }else{
+      return responseWarp(data);
+    }
   }
 
   @Patch(':id')

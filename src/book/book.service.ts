@@ -69,10 +69,14 @@ export class BookService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a  666 ddd #${id} book`;
+  async findOneById(id: number) {
+    const item = await this.bookRepository.findOne({where: {id}});
+    return item;
   }
-
+  async findOne(query: Partial<Book>) {
+    const item = await this.bookRepository.findOne({where: query});
+    return item;
+  }
   update(id: number, updateBookDto: UpdateBookDto) {
     return `This action updates a 4444#${id} book`;
   }
