@@ -35,8 +35,9 @@ export class BookController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.bookService.update(+id, updateBookDto);
+  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    const result = await this.bookService.update(+id, updateBookDto);
+    return responseWarp(result);
   }
 
   @Delete(':id')

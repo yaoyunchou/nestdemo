@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, Pri
 import { BookView } from "./book.view.entity";
 
 import { Image } from "./image.entity";
-import { Shop } from "src/shop/entities/shop.entity";
+import { XyShop } from "src/shop/entities/xyShop.entity";
 
 /**
  * 1. 书籍实体
@@ -53,7 +53,7 @@ export class Book {
     @OneToMany(() => Image, image => image.book, { cascade: true })
     images: Image[];
 
-    @ManyToMany(() => Shop, shop => shop.books,  { cascade: true })
-    @JoinTable({ name: 'books_shops' })
-    shops: Shop[]
+    @ManyToMany(() => XyShop, xyShop => xyShop.books,  { cascade: true })
+    @JoinTable({ name: 'books_xyShops' })
+    xyShops: XyShop[]
 }

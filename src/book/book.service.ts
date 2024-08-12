@@ -7,13 +7,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
 import * as _ from 'lodash';
 import { Book } from './entities/book.entity';
-import { Shop } from 'src/shop/entities/shop.entity';
+import { XyShop } from 'src/shop/entities/xyShop.entity';
+import { Image } from './entities/image.entity';
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectRepository(BookView) private readonly bookViewRepository: Repository<BookView>,
-    @InjectRepository(Shop) private readonly ShopRepository: Repository<Shop>,
+    @InjectRepository(XyShop) private readonly xyShopRepository: Repository<XyShop>,
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>){
 
     }
@@ -49,6 +50,10 @@ export class BookService {
     //   skip: ((query.page || 1) - 1) * (query.pageSize || 10),
     
     // });
+
+    const testBooks = await this.bookRepository.findOne({where: {id: 300}, relations: ['xyShops', 'images']});
+      
+    console.log('books----------------', testBooks)
     const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
     Object.keys(newQuery).forEach(key => {
       queryBuilder.andWhere(`book.${key} = :${key}`, newQuery);
@@ -62,7 +67,8 @@ export class BookService {
     queryBuilder.skip((queryPage - 1) * queryPageSize).take(queryPageSize);
     // 使用leftJoinAndSelect来加载关联的images
     queryBuilder.leftJoinAndSelect("book.images", "image")
-    .select(["book.id", "book.title","book.isbn", "book.price","book.author", "book.publisher", "image.id", "image.url"]);;
+    .leftJoinAndSelect("book.xyShops", "xyShop")
+    .select(["book.id", "book.title","book.isbn", "book.price","book.author", "book.publisher", "image.id", "image.url", "xyShop.id", "xyShop.shopName"]);
      // 获取当前页的书籍
     const books = await queryBuilder.getMany();
     return {
@@ -72,7 +78,7 @@ export class BookService {
   }
 
   async findOneById(id: number) {
-    const item = await this.bookRepository.findOne({where: {id}});
+    const item = await this.bookRepository.findOne({where: {id},relations: ['xyShops', 'images']});
     return item;
   }
   // async findOne(query: Partial<Book>) {
@@ -81,29 +87,45 @@ export class BookService {
   // }
   async update(id: number, updateBookDto: UpdateBookDto) {
     // const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
-
+    const book = await this.bookRepository.findOne({where: {id}, relations: ['xyShops', 'images']});
+    
     // 如果有shop字段
-    if(updateBookDto.shops) {
+    if(updateBookDto.xyShops) {
       // 查看是否已經关联了
-      const book = await this.bookRepository.findOne({where: {id}, relations: ['shops']});
+    
       console.log('book----------------', book)
       // 查看更新数据是否已经和当前书籍做了关联
-      const shopNameList = book.shops.map(shop => shop.shopName);
+      const shopNameList = book.xyShops.map(xyShops => xyShops.shopName);
       // 找出没有被关联的，把没有关联的数据放进book.shops中
-      for(let i =0; i< updateBookDto.shops.length; i++) {
-        const shop = updateBookDto.shops[i];
+      for(let i =0; i< updateBookDto.xyShops.length; i++) {
+        const shop = updateBookDto.xyShops[i];
         if(!shopNameList.includes(shop.shopName)) {
           // 通过shopName找到数据库中对应的shop
-          const shopInfo = await this.ShopRepository.findOne({where: {shopName: shop.shopName}});
-          book.shops.push(shopInfo);
+          const shopInfo = await this.xyShopRepository.findOne({where: {shopName: shop.shopName}});
+          book.xyShops.push(shopInfo);
         }
       }
-      const result = await this.bookRepository.save(book);
-      console.log(result)
-    }
     
-    const result = this.bookRepository.update(id, updateBookDto);
-    return result;
+    }
+
+    // 如果有images字段
+    if(updateBookDto.images) {
+      // 查看是否已經关联了
+      const imageList = book.images.map(images => images.url);
+      // 找出没有被关联的，把没有关联的数据放进book.images中
+      for(let i =0; i< updateBookDto.images.length; i++) {
+        const image = updateBookDto.images[i];
+        if(!imageList.includes(image.url)) {
+
+          book.images.push(image as Image);
+        }
+      }
+    }
+    const newBook = Object.assign(book, _.omit(updateBookDto, ['xyShops', 'images', 'id']));
+  
+    const result = await this.bookRepository.save(newBook);
+      console.log(result)
+      return result;
   }
 
   remove(id: number) {

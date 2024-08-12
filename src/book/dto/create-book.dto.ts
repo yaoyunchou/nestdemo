@@ -65,5 +65,5 @@ export class CreateBookDto {
     @IsArray()
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
-    shops: {shopName?:string, name?:string}[];
+    xyShops: {shopName?:string, name?:string}[];
 }

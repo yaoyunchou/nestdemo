@@ -10,7 +10,7 @@ import { Book } from "../../book/entities/book.entity";
  */
 
 @Entity()
-export class Shop {
+export class XyShop {
     @PrimaryGeneratedColumn()
     id: number;  // 主键
     
@@ -26,6 +26,6 @@ export class Shop {
     @UpdateDateColumn() // 更新时间
     updatedAt: Date;
 
-    @ManyToMany(() => Book, book => book.shops)
+    @ManyToMany(() => Book, book => book.xyShops)
     books: Book[]
 }
