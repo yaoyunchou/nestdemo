@@ -61,5 +61,9 @@ export class CreateBookDto {
     @Type(() => CreateImageDto) // 使用Type来指定数组中元素的类型
     images: CreateImageDto[];
 
-
+    // 店铺
+    @IsArray()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    shops: {shopName?:string, name?:string}[];
 }

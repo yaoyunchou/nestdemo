@@ -34,9 +34,7 @@ export function buildConnectionOptions() {
   const logFlag = config['LOG_ON'] === 'true';
 
   const entitiesDir =
-    process.env.NODE_ENV === 'test'
-      ? [__dirname + '/**/*.entity.ts']
-      : [__dirname + '/**/*.entity{.js,.ts}'];
+ [__dirname + '/**/*.entity{.js,.ts}'];
 
   return {
     type: config[ConfigEnum.DB_TYPE],

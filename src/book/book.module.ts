@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookView } from './entities/book.view.entity';
 import { Book } from './entities/book.entity';
 import { Image } from './entities/image.entity';
-import { Shop } from './entities/book.shop.entity';
+import { Shop } from 'src/shop/entities/shop.entity';
+
 
 @Module({
   imports: [TypeOrmModule.forFeature([BookView, Book, Image, Shop])],

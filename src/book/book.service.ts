@@ -7,11 +7,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
 import * as _ from 'lodash';
 import { Book } from './entities/book.entity';
+import { Shop } from 'src/shop/entities/shop.entity';
 
 @Injectable()
 export class BookService {
   constructor(
     @InjectRepository(BookView) private readonly bookViewRepository: Repository<BookView>,
+    @InjectRepository(Shop) private readonly ShopRepository: Repository<Shop>,
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>){
 
     }
@@ -49,7 +51,7 @@ export class BookService {
     // });
     const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
     Object.keys(newQuery).forEach(key => {
-      queryBuilder.andWhere(`${key} = :${key}`, newQuery);
+      queryBuilder.andWhere(`book.${key} = :${key}`, newQuery);
     });
    
     // 计算满足筛选条件的记录总数
@@ -73,12 +75,35 @@ export class BookService {
     const item = await this.bookRepository.findOne({where: {id}});
     return item;
   }
-  async findOne(query: Partial<Book>) {
-    const item = await this.bookRepository.findOne({where: query});
-    return item;
-  }
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a 4444#${id} book`;
+  // async findOne(query: Partial<Book>) {
+  //   const item = await this.bookRepository.findOne({where: query});
+  //   return item;
+  // }
+  async update(id: number, updateBookDto: UpdateBookDto) {
+    // const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
+
+    // 如果有shop字段
+    if(updateBookDto.shops) {
+      // 查看是否已經关联了
+      const book = await this.bookRepository.findOne({where: {id}, relations: ['shops']});
+      console.log('book----------------', book)
+      // 查看更新数据是否已经和当前书籍做了关联
+      const shopNameList = book.shops.map(shop => shop.shopName);
+      // 找出没有被关联的，把没有关联的数据放进book.shops中
+      for(let i =0; i< updateBookDto.shops.length; i++) {
+        const shop = updateBookDto.shops[i];
+        if(!shopNameList.includes(shop.shopName)) {
+          // 通过shopName找到数据库中对应的shop
+          const shopInfo = await this.ShopRepository.findOne({where: {shopName: shop.shopName}});
+          book.shops.push(shopInfo);
+        }
+      }
+      const result = await this.bookRepository.save(book);
+      console.log(result)
+    }
+    
+    const result = this.bookRepository.update(id, updateBookDto);
+    return result;
   }
 
   remove(id: number) {

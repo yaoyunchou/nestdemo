@@ -24,9 +24,20 @@ npm run start:dev
 
 ## cli 命令
 
-
 #### 生成整个模块
-nest generate resource cats
+nest generate resource [name]：生成一个新的模块，包括控制器、服务、模块、实体、DTO、接口、枚举、管道、拦截器、守卫、过滤器等。
+
+nest generate module [name]：生成一个新的模块。
+nest generate controller [name]：在指定模块中生成一个新的控制器。
+nest generate service [name]：在指定模块中生成一个新的服务。
+nest generate class [name]：生成一个新的普通类。
+nest generate interface [name]：生成一个新的接口。
+nest generate enum [name]：生成一个新的枚举类型。
+nest generate gateway [name]：生成一个新的网关（用于WebSockets或Microservices）。
+nest generate filter [name]：生成一个新的异常过滤器。
+nest generate guard [name]：生成一个新的守卫。
+nest generate interceptor [name]：生成一个新的拦截器。
+nest generate pipe [name]：生成一个新的管道。
 
 ## swgger
 

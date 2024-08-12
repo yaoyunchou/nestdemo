@@ -1,7 +1,8 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { BookView } from "./book.view.entity";
-import { Shop } from "./book.shop.entity";
+
 import { Image } from "./image.entity";
+import { Shop } from "src/shop/entities/shop.entity";
 
 /**
  * 1. 书籍实体
@@ -52,7 +53,7 @@ export class Book {
     @OneToMany(() => Image, image => image.book, { cascade: true })
     images: Image[];
 
-    @ManyToMany(() => Shop, shop => shop.books)
-    @JoinTable({ name: 'shops_books' })
+    @ManyToMany(() => Shop, shop => shop.books,  { cascade: true })
+    @JoinTable({ name: 'books_shops' })
     shops: Shop[]
 }

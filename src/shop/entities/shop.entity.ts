@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Book } from "./book.entity";
+import { Book } from "../../book/entities/book.entity";
 
 
 /**
@@ -8,6 +8,7 @@ import { Book } from "./book.entity";
  *  会标记当前店铺的商品情况的情况如上架下架， 价格， 
  * 
  */
+
 @Entity()
 export class Shop {
     @PrimaryGeneratedColumn()
@@ -26,6 +27,5 @@ export class Shop {
     updatedAt: Date;
 
     @ManyToMany(() => Book, book => book.shops)
-    @JoinTable({ name: 'shops_goods' })
     books: Book[]
 }

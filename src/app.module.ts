@@ -18,6 +18,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { ConfigEnum, LogEnum } from './enum/config.enum';
 import { PanelAnimationModule } from './panel-animation/panel-animation.module';
 import { BookModule } from './book/book.module';
+import { ShopModule } from './shop/shop.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -108,6 +109,7 @@ const schema = Joi.object({
     MenusModule,
     PanelAnimationModule,
     BookModule,
+    ShopModule,
   ],
   controllers: [],
   providers: [
