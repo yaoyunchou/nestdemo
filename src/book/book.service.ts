@@ -23,13 +23,19 @@ export class BookService {
     console.log(checkData)
 
     if(checkData) {
-      const result =  this.bookRepository.update(checkData.id, createBookDto);
+      const result =  await this.update(checkData.id, createBookDto);
       console.log('result----------------', result)
-      return '数据已存在, 书籍进行更新';
+      return {
+        data: result,
+        msg: '数据已存在，已更新',
+      };
     }else {
       const result = await this.bookRepository.create(createBookDto);
       const createBookInfo = await this.bookRepository.save(result);
-      return createBookInfo;
+      return {
+        data: createBookInfo,
+        msg: '新增数据成功',
+      }; ;
     }
    
   }
@@ -68,7 +74,8 @@ export class BookService {
     // 使用leftJoinAndSelect来加载关联的images
     queryBuilder.leftJoinAndSelect("book.images", "image")
     .leftJoinAndSelect("book.xyShops", "xyShop")
-    .select(["book.id", "book.title","book.isbn", "book.price","book.author", "book.publisher", "image.id", "image.url", "xyShop.id", "xyShop.shopName"]);
+    .orderBy("book.updatedAt", "DESC")
+    .select(["book.id", "book.title","book.isbn", "book.price","book.updatedAt", "book.author", "book.publisher", "image.id", "image.url", "xyShop.id", "xyShop.shopName"]);
      // 获取当前页的书籍
     const books = await queryBuilder.getMany();
     return {
@@ -129,7 +136,7 @@ export class BookService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} book`;
+    return this.bookRepository.delete(id);
   }
 
   // 书籍曝光数据

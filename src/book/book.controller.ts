@@ -10,9 +10,14 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
-  create(@Body() createBookDto: CreateBookDto) {
+  async create(@Body() createBookDto: CreateBookDto) {
     
-    return this.bookService.create(createBookDto);
+    const book = await this.bookService.create(createBookDto);
+    if(book.msg) {
+      return responseWarp(book.data, 0, book.msg);
+    }else{
+      return responseWarp(book, 1, '新增失败了');
+    }
   }
 
   @Get()
@@ -41,8 +46,9 @@ export class BookController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const result =  await this.bookService.remove(+id);
+    return responseWarp(result);
   }
 
   @Post('/view')
