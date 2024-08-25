@@ -4,15 +4,15 @@ import { Panel } from '../one-panel-animation.entity';
 export class CreatePanelAnimationDto {
   @IsString()
   @IsNotEmpty()
-  totalContent: string;
+  content: string;
 
   @IsString()
   @IsNotEmpty()
-  imageUrl: string;
+  title: string;
 
   @IsString()
-  prompt: string;
+  article: string;
 
   @IsNotEmpty()
-  panels?: Partial<Panel>[] 
+  chapters?: Partial<Panel>[] 
 }

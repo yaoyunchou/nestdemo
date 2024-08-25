@@ -9,9 +9,12 @@ import { AppModule } from './app.module';
 import { setupApp } from './setup';
 // import { AllExceptionFilter } from './filters/all-exception.filter';
 import { getServerConfig } from '../ormconfig';
+import { json } from 'body-parser';
+
 
 async function bootstrap() {
   const config = getServerConfig();
+  
 
   const app = await NestFactory.create(AppModule, {
     // 关闭整个nestjs日志
@@ -23,6 +26,7 @@ async function bootstrap() {
     logger: ['log','error', 'warn'],
   });
   setupApp(app);
+  app.use(json({ limit: '50mb' }));
   const config2 = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')

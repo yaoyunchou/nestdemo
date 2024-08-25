@@ -7,27 +7,21 @@ export class PanelAnimation {
     id: number;  // 主键
 
     @Column("text")
-    totalContent: string;  // 总内容
+    totalContent: string;  // 总内容， 可能是多个agent 输出的内容组合
 
     @Column("text")
-    prompt: string;  // 总提示
+    prompt: string;  // 场景的提示词，  有可能生产出一个大纲
+
 
     @Column("text")
-    imageUrl: string;  // 四格图片地址
+    title: string;  // 标题
 
-    @Column()
-    createTime: string;  // 创建时间
-
-    @Column()
-    updateTime: string;  // 更新时间
-
-    
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
     
-    @OneToMany(() => Panel, Panel => Panel.parent,  { cascade: ['insert'] })
+    @OneToMany(() => Panel, Panel => Panel.parent,  { cascade: true})
     panels: Panel[];
 }

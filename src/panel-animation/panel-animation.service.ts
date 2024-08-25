@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { pick } from 'lodash';
 import { CreatePanelAnimationDto } from './dto/create-panel-animation.dto';
 import { UpdatePanelAnimationDto } from './dto/update-panel-animation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,26 +18,47 @@ export class PanelAnimationService {
  
   async create(createPanelAnimationDto: CreatePanelAnimationDto) {
     console.log(createPanelAnimationDto)
-    const panelAnimationDTO = await this.panelAnimationRepository.create({
-      totalContent: createPanelAnimationDto.totalContent,
-      prompt: createPanelAnimationDto.prompt,
-      imageUrl: createPanelAnimationDto.imageUrl,
-      panels: createPanelAnimationDto.panels,
-      createTime: new Date().toLocaleString(),
-      updateTime: new Date().toLocaleString(),
-    });
+    // 组装panels 数据
+    const panels = []
+    createPanelAnimationDto.chapters.map((item,index)=>{
+      console.log('lodash--------------', pick)
+      const panel:any =  pick(item, ['prompt','promptImage','content','title','desc'])
+      panel.index = index
+      const images = item.images.map((url)=>{
+        return {
+          url,
+          combinedPicture:false
+        }
+      })
+      images.push({
+        url: item.combinedPicture,
+        combinedPicture:true
+      })
+      panel.images = images
+      panels.push(panel)
+    })
+
+    
+    const saveData = {
+      totalContent: createPanelAnimationDto.article,
+      prompt: createPanelAnimationDto.content,
+      title: createPanelAnimationDto.title,
+      panels
+    }
+    console.log('------------------------------', panels)
+    const panelAnimationDTO = this.panelAnimationRepository.create(saveData);
     const panelAnimation = await this.panelAnimationRepository.save(panelAnimationDTO);
    
     return panelAnimation;
   }
 
   async findAll() {
-     const list = await this.panelAnimationRepository.find({relations:['panels']});
+     const list = await this.panelAnimationRepository.find({relations:['panels', 'panels.images']});
      return list
   }
 
   findOne(id: number) {
-    const item = this.panelAnimationRepository.findOne({where:{id},relations:['panels']});
+    const item = this.panelAnimationRepository.findOne({where:{id},relations:['panels','panels.images']});
     return item;
   }
 
@@ -45,6 +67,6 @@ export class PanelAnimationService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} panelAnimation`;
+    return this.panelAnimationRepository.delete(+id,);
   }
 }
