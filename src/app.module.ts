@@ -19,6 +19,7 @@ import { ConfigEnum, LogEnum } from './enum/config.enum';
 import { PanelAnimationModule } from './panel-animation/panel-animation.module';
 import { BookModule } from './book/book.module';
 import { ShopModule } from './shop/shop.module';
+import { OrderModule } from './order/order.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -110,6 +111,7 @@ const schema = Joi.object({
     PanelAnimationModule,
     BookModule,
     ShopModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [

@@ -16,6 +16,12 @@ export class XyShop {
     
     @Column()  // 店铺名称 
     name: string;
+
+    @Column()  // 应用key 
+    appKey: string;
+
+    @Column()  // 应用密钥 
+    appSecret: string;
     
     @Column()
     shopName: string;  // 闲鱼会员名
@@ -25,6 +31,7 @@ export class XyShop {
 
     @UpdateDateColumn() // 更新时间
     updatedAt: Date;
+
 
     @ManyToMany(() => Book, book => book.xyShops)
     books: Book[]

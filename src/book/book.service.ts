@@ -56,10 +56,6 @@ export class BookService {
     //   skip: ((query.page || 1) - 1) * (query.pageSize || 10),
     
     // });
-
-    const testBooks = await this.bookRepository.findOne({where: {id: 300}, relations: ['xyShops', 'images']});
-      
-    console.log('books----------------', testBooks)
     const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
     Object.keys(newQuery).forEach(key => {
       queryBuilder.andWhere(`book.${key} = :${key}`, newQuery);
