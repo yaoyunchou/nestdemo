@@ -47,6 +47,8 @@ export function buildConnectionOptions() {
     // 同步本地的schema与数据库 -> 初始化的时候去使用
     synchronize: true,
     logging: logFlag && process.env.NODE_ENV === 'development',
+    logger: 'file',
+    maxQueryExecutionTime: 1000
     // logging: false,
   } as TypeOrmModuleOptions;
 }

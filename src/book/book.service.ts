@@ -163,8 +163,8 @@ export class BookService {
       {
         where: whereParams.length? whereParams : {},
        
-        take: query.pageSize,
-        skip: (query.page - 1) * query.pageSize,
+        take: query.pageSize || 10,
+        skip: (query.page - 1) * query.pageSize || 0,
       
       }
     );

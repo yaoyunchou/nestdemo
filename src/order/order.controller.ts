@@ -69,6 +69,7 @@ export class OrderController {
   // 闲鱼订单订阅
   @Post('/xy/subscription')
   async xyOrderSubscription(@Body() body: XYOrderDto & {shopName?: string}) {
+    console.log(' -- body-subscription-', body);
     const shopName = body?.shopName || body?.user_name
     try { 
       // 根据订单号，查询订单
