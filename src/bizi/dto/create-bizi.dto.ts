@@ -50,6 +50,11 @@ export class CreateBiziDto {
      biziId?: string;  // 用于查找壁纸项目
 
     // 作者
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    channel?: string;  // 渠道
+    // 作者
     @IsArray()
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
