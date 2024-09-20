@@ -32,6 +32,15 @@ export class BiziController {
       return responseWarp(data);
     }
   }
+  @Get('/query/:key')
+  async findOneByShopId(@Param('key') key: string, @Query('value') value: string) {
+    const data = await this.biziService.findOneByKey(key, value);
+    if(!data) {
+      return responseWarp(null, 400, '数据不存在');
+    }else{
+      return responseWarp(data);
+    }
+  }
 
 
   @Patch(':id')

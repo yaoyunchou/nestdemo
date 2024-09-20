@@ -5,7 +5,7 @@ import { Bizi } from './entities/bizi.entity';
 import { Repository } from 'typeorm';
 import { XyShop } from 'src/shop/entities/xyShop.entity';
 import { BZImage } from './entities/bzImage.entity';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 @Injectable()
 export class BiziService {
@@ -75,6 +75,15 @@ export class BiziService {
   }
   async findOneById(id: number) {
     const item = await this.biziRepository.findOne({where: {id},relations: ['xyShops', 'images']});
+    return item;
+  }
+  async findOneByKey(key:string, value:string) {
+    const queryBuilder =  this.biziRepository.createQueryBuilder("bizi"); // "Bizi" 是实体别名
+    const str = `bizi.${key} = :${key}`;
+    // const str = `bizi.shopId = :shopId`;
+    queryBuilder.andWhere(str, {[key]:value});
+    // queryBuilder.andWhere(`bizi.shopId = :shopId`, {shopId: "60"});
+    const item = await queryBuilder.getOne();
     return item;
   }
   findOne(id: number) {
