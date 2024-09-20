@@ -43,6 +43,12 @@ export class CreateBiziDto {
     @ApiProperty({ required: false })
     shopId?: string;
 
+     // 作者
+     @IsString()
+     @IsOptional() // 非必填
+     @ApiProperty({ required: false })
+     biziId?: string;  // 用于查找壁纸项目
+
     // 作者
     @IsArray()
     @IsOptional() // 非必填
