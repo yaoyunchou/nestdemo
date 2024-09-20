@@ -1,9 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put, Query } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import {CreateImageDto} from './dto/create-image.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
 import { responseWarp } from 'src/utils/common';
+
 
 @Controller('book')
 export class BookController {
@@ -58,7 +60,7 @@ export class BookController {
     return this.bookService.createBookView(createBookViewDto);
   }
   @Get("/view/all")
-  findAllBookView(@Query() query: any){
+  findAllBookView(@Query() query: any, @Body() CreateImage: CreateImageDto) {
     return this.bookService.findAllBookView(query);
   }
 

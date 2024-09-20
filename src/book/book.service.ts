@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { Book } from './entities/book.entity';
 import { XyShop } from 'src/shop/entities/xyShop.entity';
 import { Image } from './entities/image.entity';
+import { CreateImageDto } from './dto/create-image.dto';
 
 @Injectable()
 export class BookService {
