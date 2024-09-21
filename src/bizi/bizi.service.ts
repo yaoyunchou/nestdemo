@@ -95,6 +95,13 @@ export class BiziService {
   }
 
   remove(id: number) {
-    return this.biziRepository.delete(id);
+    // return this.biziRepository.delete(id);
+
+    const imageQueryBuilder =  this.biziRepository.createQueryBuilder("bzImage"); // "Bizi" 是实体别名
+    imageQueryBuilder.delete().from(BZImage).where("biziId = :biziId", { biziId: id }).execute();
+
+    const queryBuilder =  this.biziRepository.createQueryBuilder("bizi"); // "Bizi" 是实体别名
+    const result =  queryBuilder.delete().from(Bizi).where("id = :id", { id }).execute();
+    return result
   }
 }

@@ -38,7 +38,7 @@ export class Bizi {
     updatedAt: Date;
 
   
-    @OneToMany(() => BZImage, image => image.bizi, { cascade: true })
+    @OneToMany(() => BZImage, image => image.bizi, { cascade: true, })
     images: BZImage[];
 
     @ManyToMany(() => XyShop, xyShop => xyShop.books,  { cascade: true })

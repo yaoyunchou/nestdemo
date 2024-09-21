@@ -49,7 +49,8 @@ export class BiziController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.biziService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const result = await	 this.biziService.remove(+id);
+    return responseWarp(result, 0, '删除成功');
   }
 }

@@ -18,7 +18,7 @@ export class BZImage {
     @UpdateDateColumn() // 更新时间
     updatedAt: Date;
 
-    @ManyToOne(() => Bizi, bizi => bizi.images )
+    @ManyToOne(() => Bizi, bizi => bizi.images)
     @JoinColumn()
     bizi: Bizi
 }
