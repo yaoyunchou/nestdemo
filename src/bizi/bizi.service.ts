@@ -91,7 +91,7 @@ export class BiziService {
   }
 
   update(id: number, updateBiziDto: UpdateBiziDto) {
-    return `This action updates a #${id} bizi`;
+    return this.biziRepository.update(id, updateBiziDto);
   }
 
   remove(id: number) {

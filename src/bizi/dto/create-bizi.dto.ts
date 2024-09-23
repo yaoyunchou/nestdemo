@@ -23,9 +23,10 @@ export class CreateBiziDto {
     @IsString()
     @IsOptional() // 非必填
     @ApiProperty()
-    downloadUrl: string; // 书籍的第二级分类
+    downloadUrl: string[]; // 书籍的第二级分类
 
     // 书名
+    @IsArray()
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
     downloadZipUrl?: string;
@@ -48,6 +49,11 @@ export class CreateBiziDto {
      @IsOptional() // 非必填
      @ApiProperty({ required: false })
      biziId?: string;  // 用于查找壁纸项目
+
+     @IsString()
+     @IsOptional() // 非必填
+     @ApiProperty({ required: false })
+     type?: string;  // 类型
 
     // 作者
     @IsString()
