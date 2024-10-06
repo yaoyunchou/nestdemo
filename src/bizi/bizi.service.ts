@@ -15,14 +15,14 @@ export class BiziService {
     @InjectRepository(BZImage) private readonly bzImageRepository: Repository<BZImage>
   ) {}
   async create(createBiziDto: any) {
-    const checkData = await this.biziRepository.findOne({ where: {id:555}});
+    const checkData = await this.biziRepository.findOne({ where: {shopId: createBiziDto.shopId}});
     console.log(checkData)
 
     if(checkData) {
       const result =  await this.update(checkData.id, createBiziDto);
       console.log('result----------------', result)
       return {
-        data: result,
+        data: checkData,
         msg: '数据已存在，已更新',
       };
     }else {

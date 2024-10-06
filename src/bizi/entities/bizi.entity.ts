@@ -24,6 +24,8 @@ export class Bizi {
     @Column("text",  { nullable: true })
     url: string;  // 获取数据的url
 
+    @Column("text",  { nullable: true })
+    channel: string;  // 获取数据的url
     
     @Column("text",  { nullable: true })
     type: string;  // 上传的类型 临时

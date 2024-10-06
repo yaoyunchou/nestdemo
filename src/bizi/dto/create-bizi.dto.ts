@@ -60,6 +60,7 @@ export class CreateBiziDto {
     @IsOptional() // 非必填
     @ApiProperty({ required: false })
     channel?: string;  // 渠道
+    
     // 作者
     @IsArray()
     @IsOptional() // 非必填
