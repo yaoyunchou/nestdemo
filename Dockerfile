@@ -8,13 +8,13 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # 安装项目依赖
-RUN yarn
+RUN npm i
 
 # 复制项目文件到工作目录
 COPY . .
 
 # 编译 NestJS 项目
-RUN yarn build
+RUN npm run build
 
 # 暴露应用运行的端口
 EXPOSE 3001
