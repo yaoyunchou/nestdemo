@@ -26,7 +26,7 @@ const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
 const schema = Joi.object({
   NODE_ENV: Joi.string()
-    .valid('development', 'production', 'test')
+    .valid('development', 'production', 'test','uat')
     .default('development'),
   DB_PORT: Joi.number().default(3306),
   DB_HOST: Joi.alternatives().try(Joi.string().ip(), Joi.string().domain()),

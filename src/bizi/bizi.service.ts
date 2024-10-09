@@ -15,7 +15,8 @@ export class BiziService {
     @InjectRepository(BZImage) private readonly bzImageRepository: Repository<BZImage>
   ) {}
   async create(createBiziDto: any) {
-    const checkData = await this.biziRepository.findOne({ where: {shopId: createBiziDto.shopId}});
+    const checkData = null 
+    // await this.biziRepository.findOne({ where: {shopId: createBiziDto.shopId}});
     console.log(checkData)
 
     if(checkData) {
