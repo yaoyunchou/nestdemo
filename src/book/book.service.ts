@@ -16,6 +16,7 @@ export class BookService {
   constructor(
     @InjectRepository(BookView) private readonly bookViewRepository: Repository<BookView>,
     @InjectRepository(XyShop) private readonly xyShopRepository: Repository<XyShop>,
+    @InjectRepository(Image) private readonly imageRepository: Repository<XyShop>,
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>){
 
     }
@@ -133,6 +134,9 @@ export class BookService {
   }
 
   remove(id: number) {
+    // 现将关联的图片删除掉
+    const imageQueryBuilder =  this.imageRepository.createQueryBuilder("image"); // "Bizi" 是实体别名
+    imageQueryBuilder.delete().from(Image).where("bookId = :bookId", { bookId: id }).execute();
     return this.bookRepository.delete(id);
   }
 
