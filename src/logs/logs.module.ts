@@ -1,3 +1,11 @@
+/*
+ * @Author: yaoyc yaoyunchou@bananain.com
+ * @Date: 2024-05-29 11:59:26
+ * @LastEditors: yaoyc yaoyunchou@bananain.com
+ * @LastEditTime: 2024-11-04 16:45:26
+ * @FilePath: \nestjs-lesson\src\logs\logs.module.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Module } from '@nestjs/common';
 import { WinstonModule, WinstonModuleOptions } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +16,8 @@ import * as DailyRotateFile from 'winston-daily-rotate-file';
 import { LogEnum } from 'src/enum/config.enum';
 import { LogsController } from './logs.controller';
 import { LogsService } from './logs.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Logs } from './logs.entity';
 
 function createDailyRotateTrasnport(level: string, filename: string) {
   return new DailyRotateFile({
@@ -25,7 +35,7 @@ function createDailyRotateTrasnport(level: string, filename: string) {
   });
 }
 @Module({
-  imports: [
+  imports: [TypeOrmModule.forFeature([Logs]),
     WinstonModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {

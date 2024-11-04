@@ -18,8 +18,8 @@ export class AdminGuard implements CanActivate {
     //   user,
     // );
     // 普通用户
-    // 后面加入更多的逻辑
-    if (user && user.roles.filter((o) => o.id === 2).length > 0) {
+    // 后面加入更多的逻辑, 普通用户和管理员可以上传日志[1, 2] 1是管理员 2是普通用户
+    if (user && user.roles.filter((o) => o.id === 2 || o.id===1).length > 0) {
       return true;
     }
     return false;
