@@ -27,6 +27,12 @@ export class Logs {
   @Column()
   name: string;
 
+  @Column()
+  appName: string;
+
+  @Column()
+  appId: string;
+
   @Column("text")
   msg: string;
 

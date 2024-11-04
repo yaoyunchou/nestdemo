@@ -75,10 +75,6 @@ export class LogsController {
   @Serialize(PublicLogsDto)
   // @UseInterceptors(new SerializeInterceptor(PublicLogsDto))
   async postTest(@Request() req: any, @Body() dto: CreateLogsDto) {
-    console.log(
-      '🚀 ~ file: logs.controller.ts ~ line 15 ~ LogsController ~ postTest ~ dto',
-      dto,
-    );
     const user = (await this.userService.find(req.user.username)) as User;
     dto.user = user;
     dto.path = '/logs'
