@@ -29,7 +29,7 @@ import { Action } from 'src/enum/action.enum';
 import { LogsService } from './logs.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
-import { CreateLogsDto } from './dto/create-log.dto';
+import { CreateLogsDto } from './dto/create.dto';
 
 class   LogsDto {
   @IsString()

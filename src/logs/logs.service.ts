@@ -2,14 +2,14 @@
  * @Author: yaoyc yaoyunchou@bananain.com
  * @Date: 2024-05-29 11:59:26
  * @LastEditors: yaoyc yaoyunchou@bananain.com
- * @LastEditTime: 2024-11-04 18:33:26
+ * @LastEditTime: 2024-11-05 11:05:58
  * @FilePath: \nestjs-lesson\src\logs\logs.service.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logs } from './logs.entity';
-import { CreateLogsDto } from './dto/create-log.dto';
+import { CreateLogsDto } from './dto/create.dto';
 import { Repository } from 'typeorm';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import * as _ from 'lodash';
