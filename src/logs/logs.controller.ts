@@ -1,8 +1,8 @@
 /*
  * @Author: yaoyc yaoyunchou@bananain.com
  * @Date: 2024-05-29 11:59:26
- * @LastEditors: yaoyc yaoyunchou@bananain.com
- * @LastEditTime: 2024-11-05 10:37:42
+ * @LastEditors: 筑梦者 303630573@qq.com
+ * @LastEditTime: 2024-11-06 21:04:20
  * @FilePath: \nestjs-lesson\src\logs\logs.controller.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -49,7 +49,7 @@ class PublicLogsDto {
 }
 
 @Controller('logs')
-// @UseGuards()
+@UseGuards(JwtGuard, AdminGuard, CaslGuard)
 @CheckPolices((ability) => ability.can(Action.Read, Logs))
 @Can(Action.Read, Logs)
 // UserInterceptor(new SerializationInterceptor(DTO))
@@ -64,7 +64,7 @@ export class LogsController {
     console.log('query' , req?.user, user);
 
     // 根据用户找到对应的日志
-    return this.logsService.findAll({
+    return  this.logsService.findAll({
       userId: user.id
     })
   }
