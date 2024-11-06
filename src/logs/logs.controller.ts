@@ -49,7 +49,6 @@ class PublicLogsDto {
 }
 
 @Controller('logs')
-@UseGuards(JwtGuard, AdminGuard, CaslGuard)
 // @UseGuards()
 @CheckPolices((ability) => ability.can(Action.Read, Logs))
 @Can(Action.Read, Logs)
