@@ -27,7 +27,8 @@
       "migration:create": "typeorm-ts-node-commonjs migration:create",
       "migration:run": "npm run typeorm migration:run",
       "migration:revert": "npm run typeorm migration:revert",
-      "schema:drop": "npm run typeorm schema:drop"
+      "schema:drop": "npm run typeorm schema:drop",
+      "pm2":"pm2 start --name nestjs-demo dist/src/main.js --max-memory-restart 200M"
    },
    "dependencies": {
       "@casl/ability": "^6.3.2",
