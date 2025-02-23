@@ -19,7 +19,7 @@ export class JwtGuard extends AuthGuard('jwt') {
     const request = context.switchToHttp().getRequest();
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
     // const cacheToken = this.redis.get(token);
-    if (!token) {
+    if (token === 'null') {
       throw new UnauthorizedException();
     }
     const payload = await verify(
@@ -28,7 +28,19 @@ export class JwtGuard extends AuthGuard('jwt') {
     );
     const username = payload['username'];
     const tokenCache = username ? await this.redis.get(username) : null;
-    if (!payload || !username || tokenCache !== token) {
+    // 如果tokenCache 没有缓存到redis, 则新增
+    if (!tokenCache) {
+      // 设置token并添加过期时间（与JWT过期时间一致）
+      const expiration = this.configService.get(ConfigEnum.JWT_EXPIRATION) || 3600; // 默认1小时
+      await this.redis.set(
+        username,
+        token,
+        'EX',
+        expiration
+      );
+    }
+
+    if (!payload || !username ) {
       throw new UnauthorizedException();
     }
 

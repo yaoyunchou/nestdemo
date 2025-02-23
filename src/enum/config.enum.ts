@@ -14,6 +14,8 @@ export enum ConfigEnum {
   REDIS_PORT = 'REDIS_PORT',
   REDIS_PASSWORD = 'REDIS_PASSWORD',
   REDIS_RECONNECT = 'REDIS_RECONNECT',
+
+  JWT_EXPIRATION = 'JWT_EXPIRATION',
 }
 
 export enum LogEnum {
