@@ -28,10 +28,13 @@ import { AdminGuard } from 'src/guards/admin.guard';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { PublicUserDto } from './dto/public-user.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+
 @Controller('user')
 @UseFilters(new TypeormFilter())
 // @UseGuards(AuthGuard('jwt'))
 @UseGuards(JwtGuard)
+@ApiTags('user')
 export class UserController {
   // private logger = new Logger(UserController.name);
 
@@ -45,6 +48,7 @@ export class UserController {
   }
 
   @Get('/profile')
+  @ApiOperation({ summary: '获取用户详情', operationId: 'getUserProfile' })
   // @UseGuards(AuthGuard('jwt'))
   getUserProfile(
     @Query('id', ParseIntPipe) id: any,
@@ -63,11 +67,13 @@ export class UserController {
   // todo
   // logs Modules
   @Get('/logs')
+  @ApiOperation({ summary: '获取用户日志', operationId: 'getUserLogs' })
   getUserLogs(): any {
     return this.userService.findUserLogs(2);
   }
 
   @Get('/logsByGroup')
+  @ApiOperation({ summary: '获取用户日志组', operationId: 'getLogsByGroup' })
   async getLogsByGroup(): Promise<any> {
     const res = await this.userService.findLogsByGroup(2);
     // return res.map((o) => ({
@@ -85,6 +91,8 @@ export class UserController {
   // 2. 如果使用UseGuard传递多个守卫，则从前往后执行，如果前面的Guard没有通过，则后面的Guard不会执行
   @UseGuards(AdminGuard)
   @Serialize(PublicUserDto)
+  @ApiOperation({ summary: '获取用户列表', operationId: 'getUsers' })
+  @ApiResponse({ status: 200, description: '获取成功' })
   getUsers(@Query() query: getUserDto): any {
     // page - 页码，limit - 每页条数，condition-查询条件(username, role, gender)，sort-排序
     // 前端传递的Query参数全是string类型，需要转换成number类型
@@ -96,6 +104,9 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({ summary: '创建用户', operationId: 'addUser' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: '创建成功' })
   addUser(@Body(CreateUserPipe) dto: CreateUserDto): any {
     const user = dto as User;
     // user -> dto.username
@@ -104,12 +115,14 @@ export class UserController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: '获取用户详情', operationId: 'getUser' })
   getUser(): any {
     return 'hello world';
     // return this.userService.getUsers();
   }
 
   @Patch('/:id')
+  @ApiOperation({ summary: '更新用户', operationId: 'updateUser' })
   updateUser(
     @Body() dto: any,
     @Param('id', ParseIntPipe) id: number,
@@ -137,6 +150,7 @@ export class UserController {
   // 1.controller名 vs service名 vs repository名应该怎么取
   // 2.typeorm里面delete与remove的区别
   @Delete('/:id') // RESTfull Method
+  @ApiOperation({ summary: '删除用户', operationId: 'removeUser' })
   removeUser(@Param('id') id: number): any {
     // 权限：判断用户是否有更新user的权限
     return this.userService.remove(id);

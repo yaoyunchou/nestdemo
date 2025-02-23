@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -8,33 +8,45 @@ import { Order } from './entities/order.entity';
 import * as _ from 'lodash';
 import { XYOrderDto } from './dto/xy-order.dto copy';
 import { OrderGood } from './entities/order.good.entity';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { JwtGuard } from 'src/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('order')
+@ApiTags('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService,
     private readonly xyAPIService: XYAPIService){}
 
   @Post()
+  @ApiOperation({ summary: '创建订单', operationId: 'createOrder' })
+  @ApiBody({ type: CreateOrderDto })
+  @ApiResponse({ status: 201, description: '创建成功' })
   create(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(createOrderDto);
   }
 
   @Get()
+  @ApiOperation({ summary: '获取订单列表', operationId: 'findAllOrder' })
+  @ApiResponse({ status: 200, description: '获取成功' })
   findAll(@Query() query) {
     return this.orderService.findAll(query);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: '获取订单详情', operationId: 'findOneOrder' })
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: '更新订单', operationId: 'updateOrder' })
   update(@Param('id') id: string, @Body() updateOrderDto) {
     return this.orderService.update(+id, updateOrderDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: '删除订单', operationId: 'deleteOrder' })
   remove(@Param('id') id: string) {
     return this.orderService.remove(+id);
   }
@@ -58,7 +70,8 @@ export class OrderController {
   }
 
   // 闲鱼订单列表
-  @Get('/xy/list') 
+  @Get('/xy/list')
+  @ApiOperation({ summary: '获取闲鱼订单列表', operationId: 'xyOrderList' })
   async xyOrderList(@Query() query: {shopName: string, order_status?: string, pageSize?: number, pageIndex?: number}) {
     const result = await this.xyAPIService.xyRequest<Order>('/api/open/order/list', {"page_size": +query?.pageSize || 10,
     "page_no": +query?.pageIndex || 1,
@@ -68,6 +81,7 @@ export class OrderController {
   }
   // 闲鱼订单订阅
   @Post('/xy/subscription')
+  @ApiOperation({ summary: '闲鱼订单订阅', operationId: 'xyOrderSubscription' })
   async xyOrderSubscription(@Body() body: XYOrderDto & {shopName?: string}) {
     console.log(' -- body-subscription-', body);
     const shopName = body?.shopName || body?.user_name

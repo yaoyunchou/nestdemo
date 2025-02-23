@@ -13,12 +13,14 @@ import {
 import { TypeormFilter } from 'src/filters/typeorm.filter';
 import { AuthService } from './auth.service';
 import { SigninUserDto } from './dto/signin-user.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 // export function TypeOrmDecorator() {
 //   return UseFilters(new TypeormFilter());
 // }
 
 @Controller('auth')
+@ApiTags('auth')
 // @TypeOrmDecorator()
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(new TypeormFilter())
@@ -29,11 +31,20 @@ export class AuthController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: '认证服务测试接口', operationId: 'getHello' })
+  @ApiResponse({ status: 200, description: '服务正常' })
   getHello(): string {
     return 'Hello World!';
   }
 
   @Post('/signin')
+  @ApiOperation({ summary: '用户登录', operationId: 'signin'})
+  @ApiBody({ type: SigninUserDto })
+  @ApiResponse({ status: 200, description: '登录成功', schema: {
+    properties: {
+      access_token: { type: 'string', description: '访问令牌' }
+    }
+  }})
   async signin(@Body() dto: SigninUserDto) {
     const { username, password } = dto;
     const token = await this.authService.signin(username, password);
@@ -45,6 +56,10 @@ export class AuthController {
   }
 
   @Post('/signup')
+  @ApiOperation({ summary: '用户注册', operationId: 'signup'  })
+  @ApiBody({ type: SigninUserDto })
+  @ApiResponse({ status: 201, description: '注册成功' })
+  @ApiResponse({ status: 400, description: '注册失败' })
   // @UseInterceptors(SerializeInterceptor)
   signup(@Body() dto: SigninUserDto) {
     const { username, password } = dto;

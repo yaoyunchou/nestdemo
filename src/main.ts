@@ -28,18 +28,42 @@ async function bootstrap() {
   setupApp(app);
   app.use(json({ limit: '50mb' }));
   const config2 = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('NestJS API')
+    .setDescription('API 文档')
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth()
+    .
     .build();
   const document = SwaggerModule.createDocument(app, config2);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha', // 按字母顺序排序标签
+      operationsSorter: 'alpha', // 按字母顺序排序操作
+      persistAuthorization: true,
+    },
+  });
   const port =
     typeof config['APP_PORT'] === 'string'
       ? parseInt(config['APP_PORT'])
       : 3000;
   await app.listen(port);
   await app.init();
+  console.log(`Server is running on port http://localhost:${port}/api`);
+  // 通过nodejs获取ip地址访问
+  const os = require('os');
+  const networkInterfaces = os.networkInterfaces();
+  let ip = '';
+  for (const key in networkInterfaces) {
+    if (networkInterfaces[key]) {
+      for (const item of networkInterfaces[key]) {  
+        if (item.family === 'IPv4' && !item.internal) {
+          ip = item.address;
+        }
+      }
+    }
+  } 
+
+  console.log(`Server is running on port http://${ip}:${port}/api`);
+
 }
 bootstrap();

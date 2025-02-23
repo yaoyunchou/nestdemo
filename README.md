@@ -7,23 +7,6 @@
 
 
 
-推荐使用`node14 LTS`安装依赖：
-
-```
-npm i 
-```
-
-
-
-运行项目：
-
-```
-npm run start:dev
-```
-
-
-## cli 命令
-
 #### 生成整个模块
 nest generate resource [name]：生成一个新的模块，包括控制器、服务、模块、实体、DTO、接口、枚举、管道、拦截器、守卫、过滤器等。
 
@@ -74,4 +57,32 @@ export class UsersController {
   }
 }
 ```
-    
+
+## API 文档规范 (2024-03-21)
+
+### Swagger 分组规划
+基于现有src目录结构，API 将按以下方式分组：
+- 用户认证 (Auth)
+- 系统配置 (System)
+- 文件服务 (Files)
+- 基础服务 (Common)
+
+### 开发规范
+1. Controller 必须添加 @ApiTags 进行分组
+2. 接口必须包含 @ApiOperation 说明
+3. 涉及请求体的接口需要使用 @ApiBody
+4. 标准响应使用 @ApiResponse
+
+### 目录结构
+```
+src/
+├── controllers/     # 控制器目录
+├── services/        # 服务目录
+├── entities/        # 实体目录
+├── dto/            # 数据传输对象
+├── interfaces/     # 接口定义
+├── filters/        # 过滤器
+├── guards/         # 守卫
+├── decorators/     # 装饰器
+└── interceptors/   # 拦截器
+```

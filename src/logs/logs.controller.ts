@@ -30,6 +30,7 @@ import { LogsService } from './logs.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { CreateLogsDto } from './dto/create.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 class   LogsDto {
   @IsString()
@@ -49,6 +50,7 @@ class PublicLogsDto {
 }
 
 @Controller('logs')
+@ApiTags('logs | 日志')
 @UseGuards(JwtGuard, AdminGuard, CaslGuard)
 @CheckPolices((ability) => ability.can(Action.Read, Logs))
 @Can(Action.Read, Logs)
