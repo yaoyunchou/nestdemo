@@ -15,11 +15,12 @@ export class JwtGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // custom logic can go here
-    const request = context.switchToHttp().getRequest();
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-    // const cacheToken = this.redis.get(token);
-    if (token === 'null') {
+    try {
+      // custom logic can go here
+      const request = context.switchToHttp().getRequest();
+      const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+      // const cacheToken = this.redis.get(token);
+      if (token === 'null') {
       throw new UnauthorizedException();
     }
     const payload = await verify(
@@ -47,6 +48,10 @@ export class JwtGuard extends AuthGuard('jwt') {
     const parentCanActivate = (await super.canActivate(context)) as boolean; // this is necessary due to possibly returning `boolean | Promise<boolean> | Observable<boolean>
     // custom logic goes here too
     return parentCanActivate;
+    } catch (error) {
+      console.log(error);
+      throw new UnauthorizedException();
+    }
   }
 }
 

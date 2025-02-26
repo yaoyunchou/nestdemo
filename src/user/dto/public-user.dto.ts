@@ -10,7 +10,7 @@ export class PublicUserDto {
   @Expose()
   username: string;
 
-  @Exclude()
+  @Exclude() // 这里是什么意思？ 
   password: string;
 
   // typescript -> 数据库 关联关系 Mapping

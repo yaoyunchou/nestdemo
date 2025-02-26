@@ -5,8 +5,9 @@ import {CreateImageDto} from './dto/create-image.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
 import { responseWarp } from 'src/utils/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guards/jwt.guard';
+import { ListResponse } from 'src/interfaces/response.interface';
 
 @UseGuards(JwtGuard)
 @Controller('book')
@@ -17,23 +18,20 @@ export class BookController {
   @Post()
   @ApiOperation({ summary: '创建图书', operationId: 'createBook' })
   async create(@Body() createBookDto: CreateBookDto) {
-    
     const book = await this.bookService.create(createBookDto);
-    if(book.msg) {
-      return responseWarp(book.data, 0, book.msg);
-    }else{
-      return responseWarp(book, 1, '新增失败了');
-    }
+    return book;
   }
 
   @Get()
   @ApiOperation({ summary: '获取图书列表', operationId: 'findAllBook' })
-  async findAll(@Query() query: any) {
-    if(query?.id){
-      query.id = +query.id;
-    }
-    const bookDataInfo = await this.bookService.findAll(query);
-    return  responseWarp({list: bookDataInfo.books, total: bookDataInfo.total, page: query.page|| 1, pageSize: query.pageSize ||10});
+  async findAll(@Query() query: any): Promise<BaseResponse<ListResponse<CreateBookDto>>> {
+    const { books, total } = await this.bookService.findAll(query);
+    return responseWarp({
+      list: books,
+      total,
+      page: Number(query.page) || 1,
+      pageSize: Number(query.pageSize) || 10
+    });
   }
 
   @Get(':id')

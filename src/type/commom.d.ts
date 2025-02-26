@@ -6,5 +6,6 @@
 interface BaseResponse<T> {
     code: number;
     data: T | T[];
-    msg: string;
+    message?: string;
+    msg?: string;
 }

@@ -17,11 +17,33 @@ export class SerializeInterceptor implements NestInterceptor {
       map((data) => {
         // console.log('这里在拦截器执行之后', data);
         // return data;
-        return plainToInstance(this.dto, data, {
-          // 设置为true之后，所有经过该interceptor的接口都需要设置Expose或Exclude
-          // Expose就是设置哪些字段需要暴露，Exclude就是设置哪些字段不需要暴露
-          excludeExtraneousValues: true,
-        });
+        if(data?.data){
+          if(data?.data?.list){
+            const result = plainToInstance(this.dto, data.data.list, {
+              // 设置为true之后，所有经过该interceptor的接口都需要设置Expose或Exclude
+              // Expose就是设置哪些字段需要暴露，Exclude就是设置哪些字段不需要暴露
+              excludeExtraneousValues: true,
+            });
+            data.data.list = result;
+          }else {
+            const result = plainToInstance(this.dto, data.data, {
+              // 设置为true之后，所有经过该interceptor的接口都需要设置Expose或Exclude
+              // Expose就是设置哪些字段需要暴露，Exclude就是设置哪些字段不需要暴露
+              excludeExtraneousValues: true,
+            });
+            data.data = result;
+          }
+       
+          return data;
+        }else {
+          return plainToInstance(this.dto, data, {
+            // 设置为true之后，所有经过该interceptor的接口都需要设置Expose或Exclude
+            // Expose就是设置哪些字段需要暴露，Exclude就是设置哪些字段不需要暴露
+            excludeExtraneousValues: true,
+          });
+        }
+       
+      
       }),
     );
   }

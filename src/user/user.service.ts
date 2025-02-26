@@ -7,7 +7,6 @@ import { Roles } from 'src/roles/roles.entity';
 import { getUserDto } from './dto/get-user.dto';
 import { conditionUtils } from 'src/utils/db.helper';
 import * as argon2 from 'argon2';
-
 @Injectable()
 export class UserService {
   constructor(
@@ -16,37 +15,10 @@ export class UserService {
     @InjectRepository(Roles) private readonly rolesRepository: Repository<Roles>,
   ) {}
 
-  findAll(query: getUserDto) {
+  async findAll(query: getUserDto) {
     const { limit, page, username, gender, role } = query;
     const take = limit || 10;
     const skip = ((page || 1) - 1) * take;
-    // SELECT * FROM user u, profile p, role r WHERE u.id = p.uid AND u.id = r.uid AND ....
-    // SELECT * FROM user u LEFT JOIN profile p ON u.id = p.uid LEFT JOIN role r ON u.id = r.uid WHERE ....
-    // 分页 SQL -> LIMIT 10 OFFSET 10
-    // return this.userRepository.find({
-    //   select: {
-    //     id: true,
-    //     username: true,
-    //     profile: {
-    //       gender: true,
-    //     },
-    //   },
-    //   relations: {
-    //     profile: true,
-    //     roles: true,
-    //   },
-    //   where: { // AND OR
-    //     username,
-    //     profile: {
-    //       gender,
-    //     },
-    //     roles: {
-    //       id: role,
-    //     },
-    //   },
-    //   take,
-    //   skip,
-    // });
     const obj = {
       'user.username': username,
       'profile.gender': gender,
@@ -58,24 +30,17 @@ export class UserService {
       .leftJoinAndSelect('user.profile', 'profile')
       .leftJoinAndSelect('user.roles', 'roles');
     const newQuery = conditionUtils<User>(queryBuilder, obj);
-    // if (gender) {
-    //   queryBuilder.andWhere('profile.gender = :gender', { gender });
-    // } else {
-    //   queryBuilder.andWhere('profile.gender IS NOT NULL');
-    // }
-    // if (role) {
-    //   queryBuilder.andWhere('roles.id = :role', { role });
-    // } else {
-    //   queryBuilder.andWhere('roles.id IS NOT NULL');
-    // }
-    return (
-      newQuery
-        .take(take)
-        .skip(skip)
-        // .andWhere('profile.gender = :gender', { gender })
-        // .andWhere('roles.id = :role', { role })
-        .getMany()
-    );
+  
+    const list = await newQuery
+    .take(take)
+    .skip(skip)
+    .getMany()
+    const total = await newQuery.getCount();
+    return {
+      list,
+      total,
+    };
+    
   }
 
   find(username: string) {
@@ -86,7 +51,7 @@ export class UserService {
   }
 
   findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({ where: { id }, relations:['roles'] });
   }
 
   async create(user: Partial<User>) {
@@ -109,15 +74,6 @@ export class UserService {
     userTmp.password = await argon2.hash(userTmp.password);
     const res = await this.userRepository.save(userTmp);
     return res;
-    // } catch (error) {
-    //   console.log(
-    //     '🚀 ~ file: user.service.ts ~ line 93 ~ UserService ~ create ~ error',
-    //     error,
-    //   );
-    //   if (error.errno && error.errno === 1062) {
-    //     throw new HttpException(error.sqlMessage, 500);
-    //   }
-    // }
   }
 
   async update(id: any, user: Partial<User>) {
@@ -143,6 +99,18 @@ export class UserService {
       },
       relations: {
         profile: true,
+        roles: true,
+      },
+      select: { // 只查询用户名和ID, profile 也返回
+        username: true,
+        id: true,
+        profile: {
+          gender: true,
+        },
+        roles: {
+          id: true,
+          name: true,
+        },
       },
     });
   }
@@ -179,5 +147,22 @@ export class UserService {
         // .orderBy('result', 'DESC')
         .getRawMany()
     );
+  } 
+
+  async resetPassword(id: number) {
+    const user = await this.findOne(id);
+    user.password = await argon2.hash('123456');
+    return this.userRepository.save(user);
+  }
+
+  async validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+    return await argon2.verify(hashedPassword, plainPassword);
+  }
+
+  async updatePassword(userId: number, newPassword: string): Promise<void> {
+    const hashedPassword = await argon2.hash(newPassword);
+    await this.userRepository.update(userId, {
+      password: hashedPassword
+    });
   }
 }

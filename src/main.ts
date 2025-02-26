@@ -10,6 +10,8 @@ import { setupApp } from './setup';
 // import { AllExceptionFilter } from './filters/all-exception.filter';
 import { getServerConfig } from '../ormconfig';
 import { json } from 'body-parser';
+import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { BaseResponse, ListResponse } from './interfaces/response.interface';
 
 
 async function bootstrap() {
@@ -33,7 +35,20 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config2);
+
+  // 添加全局响应模型
+  const options = {
+    wrapperSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'number', example: 0 },
+        message: { type: 'string', example: 'success' },
+        result: { type: 'object' }
+      }
+    }
+  };
+
+  const document = SwaggerModule.createDocument(app, config2, options as any);
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       tagsSorter: 'alpha', // 按字母顺序排序标签
@@ -64,5 +79,7 @@ async function bootstrap() {
 
   console.log(`Server is running on port http://${ip}:${port}/api`);
 
+  // 全局应用响应转换拦截器
+  app.useGlobalInterceptors(new TransformInterceptor());
 }
 bootstrap();

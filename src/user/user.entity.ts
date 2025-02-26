@@ -24,7 +24,7 @@ export class User {
   username: string;
 
   @Column()
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   // typescript -> 数据库 关联关系 Mapping

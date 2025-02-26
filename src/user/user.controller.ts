@@ -14,6 +14,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
@@ -29,6 +30,10 @@ import { JwtGuard } from 'src/guards/jwt.guard';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { PublicUserDto } from './dto/public-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ListResponse } from 'src/interfaces/response.interface';
+import _ from 'lodash';
+import { responseWarp } from 'src/utils/common';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('user')
 @UseFilters(new TypeormFilter())
@@ -49,38 +54,25 @@ export class UserController {
 
   @Get('/profile')
   @ApiOperation({ summary: '获取用户详情', operationId: 'getUserProfile' })
-  // @UseGuards(AuthGuard('jwt'))
-  getUserProfile(
-    @Query('id', ParseIntPipe) id: any,
-    // 这里req中的user是通过AuthGuard('jwt')中的validate方法返回的
-    // PassportModule来添加的
-    // @Req() req
-  ): any {
-    // console.log(
-    //   '🚀 ~ file: auth.controller.ts ~ line 34 ~ AuthController ~ signup ~ req',
-    //   req.user,
-    // );
-    // 这是不标准的使用方法
-    return this.userService.findProfile(id);
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async getUserProfile(@Req() req: Request & { user: { userId: number, username: string } }) {
+    return await this.userService.findProfile(req.user.userId);
   }
 
   // todo
   // logs Modules
   @Get('/logs')
   @ApiOperation({ summary: '获取用户日志', operationId: 'getUserLogs' })
-  getUserLogs(): any {
-    return this.userService.findUserLogs(2);
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async getUserLogs() {
+    return await this.userService.findUserLogs(2);
   }
 
   @Get('/logsByGroup')
   @ApiOperation({ summary: '获取用户日志组', operationId: 'getLogsByGroup' })
-  async getLogsByGroup(): Promise<any> {
-    const res = await this.userService.findLogsByGroup(2);
-    // return res.map((o) => ({
-    //   result: o.result,
-    //   count: o.count,
-    // }));
-    return res;
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async getLogsByGroup() {
+    return await this.userService.findLogsByGroup(2);
   }
 
   @Get()
@@ -89,46 +81,43 @@ export class UserController {
   // @UseGuards(AdminGuard)
   // @UseGuards(AuthGuard('jwt'))
   // 2. 如果使用UseGuard传递多个守卫，则从前往后执行，如果前面的Guard没有通过，则后面的Guard不会执行
-  @UseGuards(AdminGuard)
   @Serialize(PublicUserDto)
   @ApiOperation({ summary: '获取用户列表', operationId: 'getUsers' })
   @ApiResponse({ status: 200, description: '获取成功' })
-  getUsers(@Query() query: getUserDto): any {
-    // page - 页码，limit - 每页条数，condition-查询条件(username, role, gender)，sort-排序
-    // 前端传递的Query参数全是string类型，需要转换成number类型
-    // this.logger.log(`请求getUsers成功`);
-    // this.logger.warn(`请求getUsers成功`);
-    // this.logger.error(`请求getUsers成功`);
-    return this.userService.findAll(query);
-    // return this.userService.getUsers();
+  async getUsers(@Query() query: getUserDto): Promise<BaseResponse<ListResponse<User>>> {
+    const { list, total } = await this.userService.findAll(query);
+    return  responseWarp({
+      list,
+      total,
+      page: Number(query.page) || 1,
+      pageSize: Number(query.pageSize) || 10
+    });
   }
 
   @Post()
   @ApiOperation({ summary: '创建用户', operationId: 'addUser' })
-  @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: '创建成功' })
-  addUser(@Body(CreateUserPipe) dto: CreateUserDto): any {
-    const user = dto as User;
-    // user -> dto.username
-    // return this.userService.addUser();
-    return this.userService.create(user);
+  async addUser(@Body(CreateUserPipe) dto: CreateUserDto) {
+    return await this.userService.create(dto as User);
   }
 
   @Get('/:id')
   @ApiOperation({ summary: '获取用户详情', operationId: 'getUser' })
-  getUser(): any {
-    return 'hello world';
-    // return this.userService.getUsers();
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async getUser(@Param('id') id: string) {
+    return await this.userService.findOne(+id);
   }
 
   @Patch('/:id')
   @ApiOperation({ summary: '更新用户', operationId: 'updateUser' })
-  updateUser(
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiResponse({ status: 401, description: '未授权' })
+  async updateUser(
     @Body() dto: any,
     @Param('id', ParseIntPipe) id: number,
     @Req() req,
     // @Headers('Authorization') headers: any,
-  ): any {
+  ) {
     // console.log(
     //   '🚀 ~ file: user.controller.ts ~ line 76 ~ UserController ~ headers',
     //   headers,
@@ -140,8 +129,7 @@ export class UserController {
       // 权限1：判断用户是否是自己
       // 权限2：判断用户是否有更新user的权限
       // 返回数据：不能包含敏感的password等信息
-      const user = dto as User;
-      return this.userService.update(id, user);
+      return await this.userService.update(id, dto as User);
     } else {
       throw new UnauthorizedException();
     }
@@ -151,8 +139,66 @@ export class UserController {
   // 2.typeorm里面delete与remove的区别
   @Delete('/:id') // RESTfull Method
   @ApiOperation({ summary: '删除用户', operationId: 'removeUser' })
-  removeUser(@Param('id') id: number): any {
+  @ApiResponse({ status: 200, description: '删除成功' })
+  async removeUser(@Param('id') id: number): Promise<any> {
     // 权限：判断用户是否有更新user的权限
-    return this.userService.remove(id);
+    return await this.userService.remove(id);
+  }
+  // 如果是管理员可以帮助其他账号重置密码为123456
+  @Patch('/:id/resetPassword')
+  @Serialize(PublicUserDto)
+  @ApiOperation({ summary: '重置用户密码', operationId: 'resetUserPassword' })
+  @ApiResponse({ status: 200, description: '重置成功' })
+  async resetUserPassword(@Param('id') id: number, @Req() req) {
+    // 权限：判断用户是否有更新user的权限
+    console.log(req.user);
+    const user = await this.userService.findOne(req.user.userId)
+    if(user.roles.some(role => role.name === 'admin')) {
+      return await this.userService.resetPassword(id);
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
+  @Post('change-password')
+  @Serialize(PublicUserDto)
+  @ApiOperation({ summary: '修改密码', operationId: 'changePassword' })
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({ status: 200, description: '密码修改成功' })
+  @ApiResponse({ status: 400, description: '密码验证失败' })
+  @ApiResponse({ status: 401, description: '原密码错误' })
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() req: Request & { user: { userId: number } }
+  ) {
+    const { oldPassword, newPassword } = changePasswordDto;
+    
+
+    // 验证新密码不能与旧密码相同
+    if (oldPassword === newPassword) {
+      throw new BadRequestException('新密码不能与原密码相同');
+    }
+
+    const userId = req.user.userId;
+    const user = await this.userService.findOne(userId);
+
+    // 验证原密码是否正确
+    const isValidPassword = await this.userService.validatePassword(oldPassword, user.password);
+    if (!isValidPassword) {
+      return responseWarp({
+        code:10001,
+        data: null,
+        message: '原密码错误'
+      });
+    }
+
+    // 更新密码
+    const result =   await this.userService.updatePassword(userId, newPassword);
+    
+    return {
+      code: 0,
+      data: result,
+      message: '密码修改成功'
+    };
   }
 }

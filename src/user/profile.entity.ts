@@ -20,7 +20,11 @@ export class Profile {
 
   @Column()
   @Expose()
-  photo: string;
+  images: string;
+
+  @Column()
+  @Expose()
+  avatar: string;
 
   @Column()
   @Expose()

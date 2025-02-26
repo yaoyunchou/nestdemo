@@ -14,6 +14,10 @@ export class Roles {
   @Expose()
   name: string;
 
+  @Column()
+  @Expose()
+  description: string;
+
   @ManyToMany(() => User, (user) => user.roles)
   @Expose()
   users: User[];
