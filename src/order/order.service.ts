@@ -47,8 +47,10 @@ export class OrderService {
   }
 
   async findOrderByOrderNo(order_no: string) {
+    // 根据order_no 查询订单, goods_id 
     const order =  await this.orderRepository.createQueryBuilder("order")
     .where("order.order_no = :order_no", { order_no })
+    .leftJoinAndSelect("order.orderGood", "orderGood")
     .getOne();
     console.log('order----------------', order)
     return order
