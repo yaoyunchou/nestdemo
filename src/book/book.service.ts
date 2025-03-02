@@ -37,6 +37,7 @@ export class BookService {
       return {
         data: createBookInfo,
         msg: '新增数据成功',
+        code: 0,
       }; ;
     }
    
