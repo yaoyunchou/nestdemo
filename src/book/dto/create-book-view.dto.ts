@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateBookViewDto {
 
@@ -30,7 +30,7 @@ export class CreateBookViewDto {
 
     // 创建时间
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     createTimestamp: string;
 

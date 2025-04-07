@@ -8,6 +8,7 @@ import { responseWarp } from 'src/utils/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { ListResponse } from 'src/interfaces/response.interface';
+import { Public } from '../decorators/public.decorator';
 
 @UseGuards(JwtGuard)
 @Controller('book')
@@ -59,13 +60,18 @@ export class BookController {
     return responseWarp(result);
   }
 
+  @Public()
   @Post('/view')
-  @ApiOperation({ summary: '创建图书视图', operationId: 'createBookView' })
+  @ApiOperation({ 
+    summary: '创建图书视图', 
+    operationId: 'createBookView',
+    description: '公开接口，无需认证'
+  })
+  @ApiResponse({ status: 201, description: '创建成功' })
   createBookView(@Body() createBookViewDto: CreateBookViewDto) {
-
-    console.log('createBookViewDto----------------', createBookViewDto)
     return this.bookService.createBookView(createBookViewDto);
   }
+  
   @Get("/view/all")
   @ApiOperation({ summary: '获取所有图书视图', operationId: 'findAllBookView' })
   findAllBookView(@Query() query: any, @Body() CreateImage: CreateImageDto) {

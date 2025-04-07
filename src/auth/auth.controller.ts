@@ -14,6 +14,7 @@ import { TypeormFilter } from 'src/filters/typeorm.filter';
 import { AuthService } from './auth.service';
 import { SigninUserDto } from './dto/signin-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Public } from '../decorators/public.decorator';
 
 // export function TypeOrmDecorator() {
 //   return UseFilters(new TypeormFilter());
@@ -37,6 +38,7 @@ export class AuthController {
     return 'Hello World!';
   }
 
+  @Public()
   @Post('/signin')
   @ApiOperation({ summary: '用户登录', operationId: 'signin'})
   @ApiBody({ type: SigninUserDto })
@@ -55,13 +57,14 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post('/signup')
   @ApiOperation({ summary: '用户注册', operationId: 'signup'  })
   @ApiBody({ type: SigninUserDto })
   @ApiResponse({ status: 201, description: '注册成功' })
   @ApiResponse({ status: 400, description: '注册失败' })
   // @UseInterceptors(SerializeInterceptor)
-  signup(@Body() dto: SigninUserDto) {
+  async signup(@Body() dto: SigninUserDto) {
     const { username, password } = dto;
     // if (!username || !password) {
     //   throw new HttpException('用户名或密码不能为空', 400);

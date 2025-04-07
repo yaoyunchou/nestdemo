@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { In, Repository, getRepository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BookView } from './entities/book.view.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookViewDto } from './dto/create-book-view.dto';
@@ -9,7 +9,6 @@ import * as _ from 'lodash';
 import { Book } from './entities/book.entity';
 import { XyShop } from 'src/shop/entities/xyShop.entity';
 import { Image } from './entities/image.entity';
-import { CreateImageDto } from './dto/create-image.dto';
 
 @Injectable()
 export class BookService {
@@ -143,10 +142,17 @@ export class BookService {
 
   // 书籍曝光数据
   async createBookView(createBookViewDto: CreateBookViewDto) {
+    // 获取当前日期  YYYY-MM-DD, 
+    const currentDate = new Date();
+    createBookViewDto.createTimestamp = createBookViewDto.createTimestamp || currentDate.toISOString().split('T')[0];
     // 检查是否当前日期的数据已经有了， 有了则走更新， 没有则走创建
-    const checkData = await this.bookViewRepository.findOne({where: {productId: createBookViewDto.productId, createTimestamp: createBookViewDto.createTimestamp}});
+    const checkData = await this.bookViewRepository.findOne({
+      where: {
+        productId: createBookViewDto.productId, createTimestamp: createBookViewDto.createTimestamp
+      }
+    });
 
-    if(checkData) {
+    if(checkData ) {
       return this.bookViewRepository.update(checkData.id, createBookViewDto);
     }else{
       const result = await this.bookViewRepository.create(createBookViewDto);
