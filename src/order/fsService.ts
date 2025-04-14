@@ -48,7 +48,7 @@ export class FeiShuService {
 
   // 获取访问令牌
   private async getAccessToken() {
-    if (this.accessToken) return this.accessToken;
+    // if (this.accessToken) return this.accessToken;
 
     try {
       const response = await axios.post(
