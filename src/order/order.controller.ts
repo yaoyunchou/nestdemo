@@ -10,12 +10,15 @@ import { XYOrderDto } from './dto/xy-order.dto copy';
 import { OrderGood } from './entities/order.good.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guards/jwt.guard';
+import { FeiShuService } from './fsService';
 
 @UseGuards(JwtGuard)
 @Controller('order')
 @ApiTags('order')
 export class OrderController {
+  
   constructor(private readonly orderService: OrderService,
+    private readonly feiShuService: FeiShuService,
     private readonly xyAPIService: XYAPIService){}
 
   @Post()
@@ -129,5 +132,71 @@ export class OrderController {
       console.error(' -- error--', error);
     }
     
+  }
+  /**
+   * 获取飞书订单的信息
+   * 通过用户昵称和商品名称，来获取对应的飞书多维表格数据
+   * @param query 
+   * @param searchParams 
+   * @returns 
+   */
+  @Post('/fs/order')
+  @ApiOperation({ summary: '获取飞书订单的信息', operationId: 'fsOrder' })
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async fsOrder(@Query() query: {token: string,  tableId: string, page_size:number}, @Body() searchParams: any) {
+    const { token, tableId} = query
+    const result = await this.feiShuService.searchTableRecords(token, tableId, searchParams)
+    return result
+  }
+
+  /**
+   * 获取飞书订单的商品信息
+   * 通过用户昵称和商品名称，来获取对应的飞书多维表格数据
+   * @param query 
+   * @param searchParams 
+   * @returns 
+   */
+  @Get('/fs/order/good')
+  @ApiOperation({ summary: '获取飞书订单的商品信息', operationId: 'fsGoods' })
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async fsGoods(@Query() query: {title: string,  nikeName: string}) {
+    const token = "MBcjbD0BhanE0EsQekzcGrjSnqb"
+    const tableId = "tblcyhPZwg4AgAzB"
+    const {title, nikeName} = query
+    const searchParams = {
+        "sort": [
+            {
+                "field_name": "日期",
+                "desc": true
+            }
+        ],
+        "filter": {
+          "conjunction": "and",
+          "conditions": [
+            {
+              "field_name": "订单状态",
+              "operator": "is",
+              "value": [
+                "交易成功"
+              ]
+            },{
+              "field_name": "商品",
+              "operator": "is",
+              "value": [
+                title
+              ]
+            },{
+              "field_name": "昵称",
+              "operator": "is",
+              "value": [
+                nikeName
+              ]
+            }
+          ]
+        }
+      }
+    
+    const result = await this.feiShuService.searchTableRecords(token, tableId, searchParams)
+    return result
   }
 }
