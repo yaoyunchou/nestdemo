@@ -199,4 +199,49 @@ export class OrderController {
     const result = await this.feiShuService.searchTableRecords(token, tableId, searchParams)
     return result
   }
+
+  /**
+   * 获取飞书订单的商品信息
+   * 通过用户昵称和商品名称，来获取对应的飞书多维表格数据
+   * @param query 
+   * @param searchParams 
+   * @returns 
+   */
+  @Get('/fs/order/orderNumber')
+  @ApiOperation({ summary: '获取飞书订单的商品信息', operationId: 'fsGoods' })
+  @ApiResponse({ status: 200, description: '获取成功' })
+  async getFsOrderByOrderNumber(@Query() query: {orderNumber: string}) {
+    const token = "MBcjbD0BhanE0EsQekzcGrjSnqb"
+    const tableId = "tblcyhPZwg4AgAzB"
+    const {orderNumber} = query
+    const searchParams = {
+        "sort": [
+            {
+                "field_name": "日期",
+                "desc": true
+            }
+        ],
+        "filter": {
+          "conjunction": "and",
+          "conditions": [
+            {
+              "field_name": "订单状态",
+              "operator": "is",
+              "value": [
+                "交易成功"
+              ]
+            },{
+              "field_name": "订单ID",
+              "operator": "is",
+              "value": [
+                orderNumber
+              ]
+            }
+          ]
+        }
+      }
+    
+    const result = await this.feiShuService.searchTableRecords(token, tableId, searchParams)
+    return result
+  }
 }
