@@ -2,7 +2,6 @@ import { User } from 'src/user/user.entity';
 import { Logs } from 'src/logs/logs.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Menus } from 'src/menus/menu.entity';
-import { ListResponse } from 'src/interfaces/response.interface';
 
 export const getEntities = (path: string) => {
   // /users ->User , /logs -> Logs, /roles -> Roles, /menus -> Menus, /auth -> 'Auth'

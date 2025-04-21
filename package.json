@@ -28,7 +28,8 @@
       "migration:run": "npm run typeorm migration:run",
       "migration:revert": "npm run typeorm migration:revert",
       "schema:drop": "npm run typeorm schema:drop",
-      "pm2":"pm2 start --name nestjs-demo dist/src/main.js --max-memory-restart 200M"
+      "pm2":"pm2 start --name nestjs-demo dist/src/main.js --max-memory-restart 200M",
+      "import:xyBook": "ts-node src/modles/xyBook/import.xyBook.ts"
    },
    "dependencies": {
       "@casl/ability": "^6.3.2",

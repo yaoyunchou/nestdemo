@@ -21,6 +21,7 @@ import { BookModule } from './book/book.module';
 import { ShopModule } from './shop/shop.module';
 import { OrderModule } from './order/order.module';
 import { BiziModule } from './bizi/bizi.module';
+import { XyBookModule } from './modles/xyBook/xyBook.module';
 
 const envFilePath = `.env.${process.env.NODE_ENV || `development`}`;
 
@@ -114,6 +115,7 @@ const schema = Joi.object({
     ShopModule,
     OrderModule,
     BiziModule,
+    XyBookModule,
   ],
   controllers: [],
   providers: [

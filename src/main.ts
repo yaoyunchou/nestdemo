@@ -11,7 +11,6 @@ import { setupApp } from './setup';
 import { getServerConfig } from '../ormconfig';
 import { json } from 'body-parser';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
-import { BaseResponse, ListResponse } from './interfaces/response.interface';
 
 
 async function bootstrap() {

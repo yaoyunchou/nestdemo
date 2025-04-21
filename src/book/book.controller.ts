@@ -7,7 +7,6 @@ import { CreateBookViewDto } from './dto/create-book-view.dto';
 import { responseWarp } from 'src/utils/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from 'src/guards/jwt.guard';
-import { ListResponse } from 'src/interfaces/response.interface';
 import { Public } from '../decorators/public.decorator';
 
 @UseGuards(JwtGuard)

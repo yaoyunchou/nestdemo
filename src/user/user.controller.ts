@@ -30,7 +30,6 @@ import { JwtGuard } from 'src/guards/jwt.guard';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { PublicUserDto } from './dto/public-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { ListResponse } from 'src/interfaces/response.interface';
 import _ from 'lodash';
 import { responseWarp } from 'src/utils/common';
 import { ChangePasswordDto } from './dto/change-password.dto';

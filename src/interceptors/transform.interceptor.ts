@@ -6,11 +6,10 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BaseResponse, ListResponse } from '../interfaces/response.interface';
 
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, BaseResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<BaseResponse<T>> {
+export class TransformInterceptor<T> implements NestInterceptor<T, BaseResponse<ListResponse<T>>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<BaseResponse<ListResponse<T>>> {
     return next.handle().pipe(
       map(data => {
         // 检查是否是分页数据结构
@@ -18,7 +17,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, BaseResponse<
           return {
             code: 0,
             message: 'success',
-            result: {
+            data: {
               list: data.list,
               total: data.total,
               page: data.page || 1,
@@ -31,7 +30,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, BaseResponse<
         return {
           code: 0,
           message: 'success',
-          result: data
+          data: data
         };
       }),
     );
