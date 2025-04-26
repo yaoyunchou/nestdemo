@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { XyBook } from './entities/xyBook.entity';
-import { BookData } from './entities/bookData.entity';
+import { XyBookData } from './entities/xyBookData.entity';
 import { XyShop } from '../xyShop/entities/xyShop.entity';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -14,8 +14,8 @@ export class XyBookImportService {
   constructor(
     @InjectRepository(XyBook)
     private readonly xyBookRepository: Repository<XyBook>,
-    @InjectRepository(BookData)
-    private readonly bookDataRepository: Repository<BookData>,
+    @InjectRepository(XyBookData)
+    private readonly bookDataRepository: Repository<XyBookData>,
     @InjectRepository(XyShop)
     private readonly xyShopRepository: Repository<XyShop>,
   ) {}
@@ -55,7 +55,7 @@ export class XyBookImportService {
     // 第二步：批量创建或更新 book_data 记录
     for (const isbn of uniqueIsbns) {
       try {
-        const bookData = new BookData();
+        const bookData = new XyBookData();
         bookData.isbn = isbn;
         // 找到第一个包含这个 ISBN 的项来获取书籍信息
         const firstItem = data.find(item => item.isbn === isbn);
@@ -96,6 +96,11 @@ export class XyBookImportService {
         }
         if (item.updateAt) {
           book.updateAt = new Date(item.updateAt);
+        }
+
+        // 这里还需要处理publish_shops 数据， 在导入数据的时候也要跟着导入
+        if(item?.publish_shop){
+          book.publish_shop =  item.publish_shop || []
         }
 
         await this.xyBookRepository.save(book);

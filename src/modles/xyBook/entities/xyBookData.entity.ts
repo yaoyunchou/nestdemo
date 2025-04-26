@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { XyBook } from './xyBook.entity';
 
-@Entity('book_data')
-export class BookData {
+@Entity('xy_book_data')
+export class XyBookData {
   @PrimaryColumn()
   @ApiProperty()
   isbn: string;
@@ -29,6 +29,14 @@ export class BookData {
   @ApiProperty()
   publisher: string;
 
-  @OneToMany(() => XyBook, book => book.bookData)
+  @OneToMany(() => XyBook, book => book.book_data) 
   books: XyBook[];
+  
+  @CreateDateColumn()
+  @ApiProperty({ description: '创建时间' })
+  createAt: Date;
+
+  @UpdateDateColumn()
+  @ApiProperty({ description: '更新时间' })
+  updateAt: Date;
 } 

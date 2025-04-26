@@ -5,6 +5,7 @@ import { CreateXyBookDto } from './dto/create-xyBook.dto';
 import { UpdateXyBookDto } from './dto/update-xyBook.dto';
 import { QueryXyBookDto } from './dto/query-xyBook.dto';
 import { XyBook } from './entities/xyBook.entity';
+import { QueryXyOneBookDto } from './dto/query-xyOneBook.dto';
 
 /**
  * 闲鱼书籍控制器
@@ -46,7 +47,7 @@ export class XyBookController {
   @ApiQuery({ name: 'shopID', required: false, description: '店铺ID筛选' })
   @ApiQuery({ name: 'exposure', required: false, description: '曝光状态筛选' })
   @ApiQuery({ name: 'page', required: false, type: Number, description: '页码' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: '每页数量' })
+  @ApiQuery({ name: 'pageSize', required: false, type: Number, description: '每页数量' })
   @ApiQuery({ name: 'sortBy', required: false, description: '排序字段' })
   @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], description: '排序方向' })
   @ApiResponse({ status: 200, description: '返回闲鱼书籍列表', type: [XyBook] })
@@ -59,7 +60,7 @@ export class XyBookController {
         list:items,
         total,
         page: query.page,
-        pageSize: query.limit
+        pageSize: query.pageSize
       }
     };
   }
@@ -72,12 +73,19 @@ export class XyBookController {
   @Get(':id')
   @ApiOperation({ summary: '获取单个闲鱼书籍详情' })
   @ApiResponse({ status: 200, description: '返回闲鱼书籍详情', type: XyBook })
-  @ApiResponse({ status: 404, description: '闲鱼书籍不存在' })
+  @ApiResponse({ status: 200, description: '闲鱼书籍不存在' })
   async findOne(@Param('id') id: string): Promise<BaseResponse<XyBook>> {
     const data = await this.xyBookService.findOne(id);
+    if(!data){
+      return {
+        code: 200,
+        msg: `闲鱼书籍ID ${id} 不存在`,
+        data: null
+      }
+    }
     return {
       code: 200,
-      message: '查询成功',
+      msg: '查询成功',
       data
     };
   }
@@ -120,5 +128,35 @@ export class XyBookController {
       message: '删除成功',
       data: null
     };
+  }
+  /**
+   * 根据其他数据的相关参数，获取对应的闲鱼书籍
+   * @param query 查询参数对象
+   * @returns 包含书籍列表和总数的对象    
+   */
+  @Get('/book/getByOtherData')
+  @ApiOperation({ summary: '根据其他数据的相关参数，获取对应的闲鱼书籍' })
+  @ApiQuery({ name: 'search', required: false, description: '搜索关键词（标题或内容）' })
+  @ApiQuery({ name: 'title', required: false, description: '标题' })
+  @ApiQuery({ name: 'product_id', required: false, description: ' ' })
+  @ApiQuery({ name: 'shopName', required: false, description: '店铺名称' })
+  async getByOtherData(@Query() query: QueryXyOneBookDto): Promise<BaseResponse<XyBook>> {
+    const data = await this.xyBookService.getByOtherData(query);
+    return {
+      code: 200,
+      message: '查询成功',
+      data
+    };
+  }
+  /**
+   * 处理数据
+   */
+  @Get('/fix/book')
+  async fixBookData(){
+    const data = await this.xyBookService.handleDuplicateData()
+    return {
+      code: 200,
+      msg: 'ok'
+    }
   }
 } 

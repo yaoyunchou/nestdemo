@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { XyBook } from './entities/xyBook.entity';
-import { BookData } from './entities/bookData.entity';
+import { XyBookData } from './entities/xyBookData.entity';
 import { XyShop } from '../xyShop/entities/xyShop.entity';
 import { XyBookImportService } from './xyBook.import.service';
 import { ConfigModule } from '@nestjs/config';
@@ -22,10 +22,10 @@ import { Module } from '@nestjs/common';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [XyBook, BookData, XyShop],
+      entities: [XyBook, XyBookData, XyShop],
       synchronize: process.env.DB_SYNC === 'true',
     }),
-    TypeOrmModule.forFeature([XyBook, BookData, XyShop]),
+    TypeOrmModule.forFeature([XyBook, XyBookData, XyShop]),
   ],
   providers: [XyBookImportService],
 })

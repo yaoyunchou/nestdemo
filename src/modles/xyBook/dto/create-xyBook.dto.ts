@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { XyShop } from "../../xyShop/entities/xyShop.entity";
+import { CreateXyGoodDto } from './create-xyGood.dto';
+
 
 class BookDataDto {
   @ApiProperty()
@@ -20,7 +22,6 @@ class BookDataDto {
   @IsString()
   author: string;
 }
-
 
 
 export class CreateXyBookDto {
@@ -46,12 +47,14 @@ export class CreateXyBookDto {
   content: string;
 
   @ApiProperty()
-  @IsNumber()
-  createAt: number;
+  @ValidateNested()
+  @Type(() => BookDataDto)
+  book_data: BookDataDto;
 
-  @ApiProperty()
-  @IsNumber()
-  updateAt: number;
+  @ApiProperty({ description: '商品信息列表' })
+  @IsArray()
+  @Type(() => CreateXyGoodDto)
+  publish_shop: CreateXyGoodDto[];
 
   @ApiProperty({ required: false, default: 0 })
   @IsNumber()
@@ -88,8 +91,4 @@ export class CreateXyBookDto {
   @ApiProperty()
   @IsString()
   shopName: string;
-
-  @ApiProperty()
-  @IsString()
-  shopID: string;
 } 
