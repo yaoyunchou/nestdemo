@@ -70,8 +70,8 @@ export class XyBookService {
 
     const queryBuilder = this.xyBookRepository.createQueryBuilder('xyBook');
     // 需要联动获取 book_data 和 publish_shop 的数据
-    queryBuilder.leftJoinAndSelect('xyBook.bookData', 'bookData');
-    queryBuilder.leftJoinAndSelect('xyBook.publishShop', 'publishShop');
+    queryBuilder.leftJoinAndSelect('xyBook.book_data', 'book_data');
+    queryBuilder.leftJoinAndSelect('xyBook.publish_shop', 'publish_shop');
 
     // 添加搜索条件
     if (query.search) {
@@ -154,6 +154,10 @@ export class XyBookService {
 
       // 2. 更新 book_data
       if (book_data) {
+        // 检查字段author是否超过100， 如果超过则进行截取
+        if(book_data?.author?.length > 100){
+          book_data.author = book_data.author.substring(0, 100)
+        }
         await queryRunner.manager.update(
           XyBookData,
           { isbn: book.book_data.isbn },
@@ -237,8 +241,8 @@ export class XyBookService {
   async getByOtherData(query: QueryXyOneBookDto): Promise<XyBook> {
     const { search, product_id, shopName, title, ISBN} = query;
     const queryBuilder = this.xyBookRepository.createQueryBuilder('xyBook');
-    queryBuilder.leftJoinAndSelect('xyBook.bookData', 'bookData');
-    queryBuilder.leftJoinAndSelect('xyBook.publishShop', 'publishShop');
+    queryBuilder.leftJoinAndSelect('xyBook.book_data', 'book_data');  
+    queryBuilder.leftJoinAndSelect('xyBook.publish_shop', 'publish_shop');
     // 添加搜索条件
     if (search) {
       queryBuilder.where('xyBook.title LIKE :search OR xyBook.content LIKE :search', { 

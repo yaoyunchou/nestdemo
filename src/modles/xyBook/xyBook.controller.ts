@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { XyBookService } from './xyBook.service';
 import { CreateXyBookDto } from './dto/create-xyBook.dto';
@@ -14,6 +14,8 @@ import { QueryXyOneBookDto } from './dto/query-xyOneBook.dto';
 @ApiTags('闲鱼书籍')
 @Controller('xyBook')
 export class XyBookController {
+  private readonly logger = new Logger(XyBookController.name);
+
   constructor(private readonly xyBookService: XyBookService) {}
 
   /**
@@ -26,12 +28,19 @@ export class XyBookController {
   @ApiBody({ type: CreateXyBookDto })
   @ApiResponse({ status: 201, description: '闲鱼书籍创建成功', type: XyBook })
   async create(@Body() createXyBookDto: CreateXyBookDto): Promise<BaseResponse<XyBook>> {
-    const data = await this.xyBookService.create(createXyBookDto);
-    return {
-      code: 200,
-      message: '创建成功',
-      data
-    };
+    this.logger.log(`创建书籍: ${JSON.stringify(createXyBookDto)}`);
+    try {
+      const data = await this.xyBookService.create(createXyBookDto);
+      this.logger.log(`书籍创建成功: ${data._id}`);
+      return {
+        code: 200,
+        message: '创建成功',
+        data
+      };
+    } catch (error) {
+      this.logger.error(`书籍创建失败: ${error.message}`);
+      throw error;
+    }
   }
 
   /**
@@ -52,17 +61,24 @@ export class XyBookController {
   @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], description: '排序方向' })
   @ApiResponse({ status: 200, description: '返回闲鱼书籍列表', type: [XyBook] })
   async findAll(@Query() query: QueryXyBookDto): Promise<BaseResponse<XyBook>> {
-    const { items, total } = await this.xyBookService.findAll(query);
-    return {
-      code: 200,
-      message: '查询成功',
-      data: {
-        list:items,
-        total,
-        page: query.page,
-        pageSize: query.pageSize
-      }
-    };
+    this.logger.log(`查询书籍列表: ${JSON.stringify(query)}`);
+    try {
+      const { items, total } = await this.xyBookService.findAll(query);
+      this.logger.log(`查询成功，共 ${total} 条记录`);
+      return {
+        code: 200,
+        message: '查询成功',
+        data: {
+          list: items,
+          total,
+          page: query.page,
+          pageSize: query.pageSize
+        }
+      };
+    } catch (error) {
+      this.logger.error(`查询失败: ${error.message}`);
+      throw error;
+    }
   }
 
   /**
@@ -75,19 +91,27 @@ export class XyBookController {
   @ApiResponse({ status: 200, description: '返回闲鱼书籍详情', type: XyBook })
   @ApiResponse({ status: 200, description: '闲鱼书籍不存在' })
   async findOne(@Param('id') id: string): Promise<BaseResponse<XyBook>> {
-    const data = await this.xyBookService.findOne(id);
-    if(!data){
+    this.logger.log(`查询书籍详情: ${id}`);
+    try {
+      const data = await this.xyBookService.findOne(id);
+      if(!data){
+        this.logger.warn(`书籍不存在: ${id}`);
+        return {
+          code: 200,
+          msg: `闲鱼书籍ID ${id} 不存在`,
+          data: null
+        }
+      }
+      this.logger.log(`查询成功: ${id}`);
       return {
         code: 200,
-        msg: `闲鱼书籍ID ${id} 不存在`,
-        data: null
-      }
+        msg: '查询成功',
+        data
+      };
+    } catch (error) {
+      this.logger.error(`查询失败: ${error.message}`);
+      throw error;
     }
-    return {
-      code: 200,
-      msg: '查询成功',
-      data
-    };
   }
 
   /**
@@ -105,12 +129,19 @@ export class XyBookController {
     @Param('id') id: string,
     @Body() updateXyBookDto: UpdateXyBookDto
   ): Promise<BaseResponse<XyBook>> {
-    const data = await this.xyBookService.update(id, updateXyBookDto);
-    return {
-      code: 200,
-      message: '更新成功',
-      data
-    };
+    this.logger.log(`更新书籍: ${id}, 数据: ${JSON.stringify(updateXyBookDto)}`);
+    try {
+      const data = await this.xyBookService.update(id, updateXyBookDto);
+      this.logger.log(`更新成功: ${id}`);
+      return {
+        code: 200,
+        message: '更新成功',
+        data
+      };
+    } catch (error) {
+      this.logger.error(`更新失败: ${error.message}`);
+      throw error;
+    }
   }
 
   /**
@@ -122,13 +153,21 @@ export class XyBookController {
   @ApiResponse({ status: 200, description: '闲鱼书籍删除成功' })
   @ApiResponse({ status: 404, description: '闲鱼书籍不存在' })
   async remove(@Param('id') id: string): Promise<BaseResponse<null>> {
-    await this.xyBookService.remove(id);
-    return {
-      code: 200,
-      message: '删除成功',
-      data: null
-    };
+    this.logger.log(`删除书籍: ${id}`);
+    try {
+      await this.xyBookService.remove(id);
+      this.logger.log(`删除成功: ${id}`);
+      return {
+        code: 200,
+        message: '删除成功',
+        data: null
+      };
+    } catch (error) {
+      this.logger.error(`删除失败: ${error.message}`);
+      throw error;
+    }
   }
+
   /**
    * 根据其他数据的相关参数，获取对应的闲鱼书籍
    * @param query 查询参数对象
@@ -141,22 +180,37 @@ export class XyBookController {
   @ApiQuery({ name: 'product_id', required: false, description: ' ' })
   @ApiQuery({ name: 'shopName', required: false, description: '店铺名称' })
   async getByOtherData(@Query() query: QueryXyOneBookDto): Promise<BaseResponse<XyBook>> {
-    const data = await this.xyBookService.getByOtherData(query);
-    return {
-      code: 200,
-      message: '查询成功',
-      data
-    };
+    this.logger.log(`根据其他数据查询书籍: ${JSON.stringify(query)}`);
+    try {
+      const data = await this.xyBookService.getByOtherData(query);
+      this.logger.log(`查询成功: ${data ? data._id : '无结果'}`);
+      return {
+        code: 200,
+        message: '查询成功',
+        data
+      };
+    } catch (error) {
+      this.logger.error(`查询失败: ${error.message}`);
+      throw error;
+    }
   }
+
   /**
    * 处理数据
    */
   @Get('/fix/book')
   async fixBookData(){
-    const data = await this.xyBookService.handleDuplicateData()
-    return {
-      code: 200,
-      msg: 'ok'
+    this.logger.log('开始处理重复数据');
+    try {
+      const data = await this.xyBookService.handleDuplicateData();
+      this.logger.log(`处理完成: ${JSON.stringify(data)}`);
+      return {
+        code: 200,
+        msg: 'ok'
+      };
+    } catch (error) {
+      this.logger.error(`处理失败: ${error.message}`);
+      throw error;
     }
   }
 } 

@@ -11,6 +11,7 @@ import { setupApp } from './setup';
 import { getServerConfig } from '../ormconfig';
 import { json } from 'body-parser';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 
 async function bootstrap() {
@@ -80,5 +81,8 @@ async function bootstrap() {
 
   // 全局应用响应转换拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
+
+  // 应用日志中间件
+  app.use(new LoggerMiddleware().use);
 }
 bootstrap();
