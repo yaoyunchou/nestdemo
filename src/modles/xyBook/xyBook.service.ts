@@ -93,11 +93,23 @@ export class XyBookService {
       });
     }
 
-    // 添加曝光状态筛选
+    // 添加曝光状态筛选， 可能会有多个isbn 一起查询，需要判断是否有，
     if (query.ISBN !== undefined) {
-      queryBuilder.andWhere('xyBook.ISBN = :ISBN', {
-        ISBN: query.ISBN,
-      });
+      if(query.ISBN.indexOf(',') !== -1){
+        // 处理多个ISBN的情况, 有就返回， 没有命中就不返回
+        const isbnArray = query.ISBN.split(',');
+                
+        // 使用 IN 操作符已经实现了"有就返回,没有就不返回"的逻辑
+        // IN 操作符会匹配数组中的任意值,不需要额外优化
+        queryBuilder.andWhere('xyBook.ISBN IN (:...isbnArray)', {
+          isbnArray: isbnArray,
+        });
+        
+      } else {
+        queryBuilder.andWhere('xyBook.ISBN = :ISBN', {
+          ISBN: query.ISBN,
+        });
+      }
     }
 
     // 添加排序
@@ -267,7 +279,7 @@ export class XyBookService {
         title: title,     
       });
     }
-    // 添加ISBN筛选
+    // 添加ISBN筛选,
     if (ISBN) {
       queryBuilder.andWhere('xyBook.ISBN = :ISBN', {
         ISBN: ISBN,
