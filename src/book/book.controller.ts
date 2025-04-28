@@ -19,7 +19,7 @@ export class BookController {
   @ApiOperation({ summary: '创建图书', operationId: 'createBook' })
   async create(@Body() createBookDto: CreateBookDto) {
     const book = await this.bookService.create(createBookDto);
-    return book;
+    return responseWarp(book);
   }
 
   @Get()

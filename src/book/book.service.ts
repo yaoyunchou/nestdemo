@@ -60,7 +60,20 @@ export class BookService {
     // });
     const queryBuilder =  this.bookRepository.createQueryBuilder("book"); // "book" 是实体别名
     Object.keys(newQuery).forEach(key => {
-      queryBuilder.andWhere(`book.${key} = :${key}`, newQuery);
+      if(key === 'isbn') {
+        // 当isbn是一个数组的时候单独处理
+        
+        if(newQuery[key].indexOf(',') !== -1) {
+          const isbnArray = newQuery[key].split(',')
+          queryBuilder.andWhere(`book.isbn IN (:...isbnArray)`, {
+            isbnArray
+          });
+        }else {
+          queryBuilder.andWhere(`book.isbn = :isbn`, newQuery);
+        }
+      }else {
+        queryBuilder.andWhere(`book.${key} = :${key}`, newQuery);
+      }
     });
    
     // 计算满足筛选条件的记录总数
