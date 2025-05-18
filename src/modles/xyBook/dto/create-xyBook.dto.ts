@@ -25,9 +25,7 @@ class BookDataDto {
 
 
 export class CreateXyBookDto {
-  @ApiProperty()
-  @IsString()
-  _id: string;
+
 
   @ApiProperty()
   @IsNumber()
@@ -51,7 +49,7 @@ export class CreateXyBookDto {
   @Type(() => BookDataDto)
   book_data: BookDataDto;
 
-  @ApiProperty({ description: '商品信息列表' })
+  @ApiProperty({ description: '商品信息列表', type: [CreateXyGoodDto] ,required: false})
   @IsArray()
   @Type(() => CreateXyGoodDto)
   publish_shop: CreateXyGoodDto[];
@@ -80,7 +78,7 @@ export class CreateXyBookDto {
   @IsNumber()
   price: number;
 
-  @ApiProperty()
+  @ApiProperty({required: false})
   @IsNumber()
   product_status: number;
 

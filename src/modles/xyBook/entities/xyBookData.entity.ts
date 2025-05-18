@@ -2,6 +2,9 @@ import { Entity, Column, PrimaryColumn, OneToMany, CreateDateColumn, UpdateDateC
 import { ApiProperty } from '@nestjs/swagger';
 import { XyBook } from './xyBook.entity';
 
+/**
+ * 图书数据从表
+ */
 @Entity('xy_book_data')
 export class XyBookData {
   @PrimaryColumn()

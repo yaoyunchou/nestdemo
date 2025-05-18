@@ -5,6 +5,10 @@ import { XyShop } from '../../xyShop/entities/xyShop.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { XyGoodInfo } from './xyGoodInfo.entity';
 
+
+/**
+ * 图书主表
+ */
 @Entity('xy_books')
 export class XyBook {
   @PrimaryColumn()

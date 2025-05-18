@@ -2,6 +2,9 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, Index, ManyToOne, C
 import { ApiProperty } from '@nestjs/swagger';
 import { XyBook } from './xyBook.entity';
 
+/** 
+ * 商品信息从表
+ */
 @Entity('xy_good_info')
 export class XyGoodInfo {
   @PrimaryGeneratedColumn()
