@@ -202,8 +202,10 @@ export class BookService {
   }
 
   // 获取书籍曝光数据
-  async findBookView(query: BookView) {
-    const bookView = await this.bookViewRepository.findOne({where: {...query}});
+  async findBookView(query: { productId?: string; createTimestamp?: string }) {
+    const bookView = await this.bookViewRepository.findOne({
+      where: query,
+    });
     return bookView;
   }
 }

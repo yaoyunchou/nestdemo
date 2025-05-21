@@ -17,6 +17,7 @@ export class BookView {
 
     @Column()
     wants: number;  // 想读量
+    
 
     @Column()
     createTimestamp: string// 收集的时间

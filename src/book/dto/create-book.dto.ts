@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, isObject } from "class-validator";
 import { CreateImageDto } from "./create-image.dto";
 import { Type } from "class-transformer";
+import { isString } from "lodash";
 export class CreateBookDto {
 
     // isbn
@@ -60,6 +61,32 @@ export class CreateBookDto {
     @ApiProperty({ required: false })
     @Type(() => CreateImageDto) // 使用Type来指定数组中元素的类型
     images: CreateImageDto[];
+
+    // 闲鱼图片
+    @IsArray()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    @Type(() => String) // 使用Type来指定数组中元素的类型
+    xyImage: string[];
+
+    // 原始数据url
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    xyOriginalUrl: string;
+
+    // 详情
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    description: string;
+
+    // 来源 source 
+    @IsString()
+    @IsOptional() // 非必填
+    @ApiProperty({ required: false })
+    source: string;
+
 
     // 店铺
     @IsArray()
