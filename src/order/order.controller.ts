@@ -104,7 +104,8 @@ export class OrderController {
         const orderResult = await this.xyAPIService.xyRequest<any>('/api/open/order/detail', {shopName: shopName, order_no:body.order_no});
         const xyOrder = orderResult.data;
 
-        if(orderResult?.code === 0) {
+        // 当有地址和手机号的时候进行新建，不然后面的数据都会出问题
+        if(orderResult?.code === 0 && xyOrder?.receiver_mobile) {
 
           const  product_id = _.get(xyOrder, 'goods.product_id');
           const book = await this.xyAPIService.xyRequest('/api/open/product/detail', {product_id});
@@ -122,6 +123,8 @@ export class OrderController {
             return  responseWarp(createOrderResult, 0, book?.msg);
           }
           
+        }else{
+          return responseWarp({}, 1, '同步失败了!');
         }
         
 
